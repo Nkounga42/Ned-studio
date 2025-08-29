@@ -1,0 +1,12 @@
+{
+  "name": "co-editor-plugin",
+  "version": "1.0.0",
+  "description": "Co-Editor Plugin for NED Studio",
+  "author": "NED Studio",
+  "entry": "bundle.js",
+  "icon": "icon.png",
+  "permissions": ["notification"],
+  "dependencies": {
+    "react": "^19.1.0"
+  }
+}
