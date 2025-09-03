@@ -1,7 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils' 
 import logoIcon from '../../src/renderer/src/assets/img/logo.png?asset'
 import { PluginManager } from './plugin-manager'
 // import { title } from 'process'

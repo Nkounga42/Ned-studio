@@ -1,6 +1,6 @@
 import { app, ipcMain, dialog } from 'electron'
 import { readdir, readFile, access } from 'fs/promises'
-import { join, dirname } from 'path'
+import { join } from 'path'
 import { PluginManifest, LoadedPlugin } from '../types/plugin'
 
 export class PluginManager {

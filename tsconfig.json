@@ -1,12 +1,7 @@
 {
   "files": [],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
-    "compilerOptions": {
-      "moduleResolution": "bundler",   // ou "nodenext" si tu préfères
-      "module": "esnext",              // recommandé avec Vite
-      "types": ["vite/client"],        // utile pour que Vite soit reconnu
-      "allowSyntheticDefaultImports": true,
-      "esModuleInterop": true
-    }
-  
+  "references": [
+    { "path": "./tsconfig.node.json" }, 
+    { "path": "./tsconfig.web.json" }
+  ]
 }
