@@ -20,13 +20,13 @@ function App(): React.JSX.Element {
     )
   }
 
-  return (
+   /* <nav className="app-nav">
+    <button onClick={() => setCurrentView('home')} className="active">Home</button>
+    <button onClick={() => setCurrentView('plugins')}>Plugins</button>
+    </nav>  */ 
+    return (
     <div className="app">
-      <nav className="app-nav">
-        <button onClick={() => setCurrentView('home')} className="active">Home</button>
-        <button onClick={() => setCurrentView('plugins')}>Plugins</button>
-      </nav> 
-       
+      app
     </div>
   )
 }

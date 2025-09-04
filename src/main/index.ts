@@ -12,15 +12,15 @@ function createWindow(): void {
     height: 700,
     minWidth: 500,
     minHeight: 500,
-    show: false,
+    // show: false,
     autoHideMenuBar: true,
-    vibrancy: 'under-window',
-    visualEffectState: 'active',
-    titleBarStyle: 'hidden',
+    // vibrancy: 'under-window',
+    // visualEffectState: 'active',
+    // titleBarStyle: 'hidden',
     center: true,
     title: 'NED Studio',
     trafficLightPosition: { x: 10, y: 10 },
-    frame: false,
+    frame: true,
     icon: logoIcon, // Utiliser logo.png comme icône de la taskbar
     ...(process.platform === 'linux' ? { icon: logoIcon } : {}),
     webPreferences: {
@@ -71,10 +71,7 @@ app.whenReady().then(async () => {
   // Initialize plugin manager
   const pluginManager = new PluginManager()
   await pluginManager.scanPlugins()
-
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+ 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
@@ -84,22 +81,14 @@ app.whenReady().then(async () => {
 
   createWindow()
 
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
+  app.on('activate', function () { 
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+}) 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+ 
