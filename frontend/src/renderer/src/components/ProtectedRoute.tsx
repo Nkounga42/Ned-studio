@@ -1,30 +1,26 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useLocation, Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import Sidebar from "./Base/sidebar";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  // Pages publiques qui ne nécessitent pas d'authentification
-  const publicRoutes = ['/login', '/register'];
-  const isPublicRoute = publicRoutes.includes(location.pathname);
-
-  // Si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
-  if (!isAuthenticated && !isPublicRoute) {
-    return <Navigate to="/login" replace />;
+  if (isLoading) {
+    return <div>Chargement...</div>;
   }
 
-  // Si l'utilisateur est connecté et essaie d'accéder à login/register, rediriger vers l'app
-  if (isAuthenticated && isPublicRoute) {
-    return <Navigate to="/app" replace />;
+  if (!isAuthenticated) {
+    // Non connecté → redirige vers login et conserve l'URL d'origine
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>;
+  return <div className="flex"><Sidebar />{children}</div>;
 };
 
 export default ProtectedRoute;

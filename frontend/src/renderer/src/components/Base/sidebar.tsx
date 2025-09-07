@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Menu,
-  ChevronLeft,
-  ChevronRight,
+import {  
   LogOut,
   User
 } from 'lucide-react';
 import { setToggleSidebarFunction } from '../../utils/sidebarUtils';
 import { useMenuItems } from '../../hooks/useMenuItems';
 import { useAuth } from '../../contexts/AuthContext';
+import logo from '../../assets/img/logo.png';
 
 interface SidebarProps {
   className?: string;
@@ -20,11 +18,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
   const { menuItems, setActiveItem } = useMenuItems();
   const { user, logout } = useAuth();
 
-  // Set the toggle function reference
   React.useEffect(() => {
     setToggleSidebarFunction(() => setIsExpanded((prev) => !prev));
-    
-    // Cleanup on unmount
     return () => {
       setToggleSidebarFunction(null);
     };
@@ -70,24 +65,18 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       animate={isExpanded ? 'expanded' : 'collapsed'}
       initial="expanded"
     >
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-6 bg-primary text-primary-content rounded-full p-1 shadow-md hover:bg-primary-focus transition-colors z-10"
-      >
-        {isExpanded ? (
-          <ChevronLeft className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
-        )}
-      </button>
+       
 
       {/* Header */}
-      <div className="p-4 border-b border-base-300">
+      <div className="p-2 border-b border-base-300">
         <div className="flex items-center space-x-3">
-          <div className="avatar">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <Menu className="w-4 h-4 text-primary-content" />
+          <div className="avatar" onClick={() => setIsExpanded(!isExpanded)}>
+            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Electron Logo"
+                className="w-6 h-6"
+              />
             </div>
           </div>
           <motion.div
@@ -102,14 +91,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="p-4">
-        <ul className="space-y-2">
+      <nav className="p-2">
+        <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.id}>
               <a
                 href={item.href}
                 onClick={() => setActiveItem(item.id)}
-                className={`flex items-center space-x-3 p-3 rounded-lg transition-colors group relative ${
+                className={`flex items-center space-x-3 p-2 rounded-lg transition-colors group relative ${
                   item.isActive 
                     ? 'bg-primary text-primary-content' 
                     : 'hover:bg-base-300'
@@ -168,9 +157,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       </nav>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-base-300">
+      <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-base-300">
         {/* User Info & Logout */}
-        <div className="mb-3">
+        <div className="">
           <motion.div
             className="flex items-center space-x-3 p-2 rounded-lg bg-base-300/50"
             variants={contentVariants}
@@ -204,14 +193,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
             </motion.button>
           </motion.div>
         </div>
-        
-        <motion.div
-          className="text-xs text-base-content/60 text-center"
-          variants={contentVariants}
-          animate={isExpanded ? 'expanded' : 'collapsed'}
-        >
-          2024 NED Studio
-        </motion.div>
       </div>
     </motion.div>
   );

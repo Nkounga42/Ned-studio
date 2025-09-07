@@ -29,8 +29,8 @@ body {
    
 @plugin "daisyui/theme" {
   name: "light";
-  default: false;
-  prefersdark: false;
+  default: true;
+  prefersdark: true;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(98% 0 0);
@@ -95,7 +95,7 @@ body {
   --depth: 1;
   --noise: 0;
 }
-@plugin "daisyui/theme" {
+/* @plugin "daisyui/theme" {
   name: "bumblebee";
   default: false;
   prefersdark: false;
@@ -130,7 +130,7 @@ body {
   --noise: 1;
 }
 @plugin "daisyui/theme" {
-  name: "dark";
+  name: "darkx";
   default: true;
   prefersdark: true;
   color-scheme: "dark";
@@ -162,4 +162,4 @@ body {
   --border: 2px;
   --depth: 1;
   --noise: 0;
-}
+} */

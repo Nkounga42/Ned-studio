@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { useLoginConfig, LoginConfig } from "../hooks/useLoginConfig"
-
+import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 
 interface Props {
@@ -12,11 +12,14 @@ interface Props {
 export default function Login({ config }: Props): React.JSX.Element {
   const { forgotPasswordUrl, signUpUrl, brand } = useLoginConfig(config)
   const { login } = useAuth()
-  const [email, setEmail] = useState("okoungagil@gmail.com")
+  const [email, setEmail] = useState("azkoungagil@gmail.com")
   const [password, setPassword] = useState("117Gv12Cg")
   const [remember, setRemember] = useState(true)
   const [showPwd, setShowPwd] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
@@ -35,16 +38,10 @@ export default function Login({ config }: Props): React.JSX.Element {
     setLoading(true)
 
     try {
-      // Appel à l'API de connexion
       const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
       })
 
       const data = await response.json()
@@ -53,15 +50,15 @@ export default function Login({ config }: Props): React.JSX.Element {
         throw new Error(data.error || "Erreur lors de la connexion")
       }
 
-      // Stocker le token dans le localStorage
-
-      // Mettre à jour le contexte avec le vrai objet utilisateur
-      await login(data.user); 
-      console.log(data.user)// data.user contient { _id, name, email }
-      localStorage.setItem("ned_token", data.token);
-
+      // Met à jour le contexte
+      await login(data.user)
+      localStorage.setItem("ned_token", data.token)
 
       toast.success("Connexion réussie !")
+
+      // Redirection après login
+      const from = (location.state as any)?.from?.pathname || "/app"
+      navigate(from, { replace: true })
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erreur de connexion")
     } finally {
@@ -71,11 +68,8 @@ export default function Login({ config }: Props): React.JSX.Element {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
-      {/* Fond avec gradient CSS au lieu d'une image externe */}
       <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br from-indigo-900/30 via-purple-900/20 to-pink-900/30 opacity-60" />
-
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(99,102,241,.35),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(236,72,153,.25),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(34,197,94,.25),transparent_35%)]" />
-
       <div className="relative z-10  grid min-h-screen  grid-cols-1 items-center pl-4  sm:pl-6 lg:grid-cols-2 lg:gap-16 lg:pl-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

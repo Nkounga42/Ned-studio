@@ -10,7 +10,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (userFromBackend: User) => Promise<void>;
   logout: () => void;
   error: string | null;
 }
@@ -23,67 +23,48 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = !!user;
 
-  // Check for existing session on app start
+  // Hydrate le contexte depuis localStorage au démarrage
   useEffect(() => {
     const savedUser = localStorage.getItem('ned_user');
     if (savedUser) {
       try {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
-      } catch (err) {
-        console.error('Error parsing saved user data:', err);
+        setUser(JSON.parse(savedUser));
+      } catch {
         localStorage.removeItem('ned_user');
       }
     }
+    setIsLoading(false);
   }, []);
 
-const login = async (userFromBackend: { _id: string; name: string; email: string }) => {
-  setIsLoading(true);
-  setError(null);
+  const login = async (userFromBackend: User) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      setUser(userFromBackend);
+      localStorage.setItem('ned_user', JSON.stringify(userFromBackend));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur de connexion');
+      localStorage.removeItem('ned_user');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  try {
-    const userData: User = {
-      id: userFromBackend._id,
-      username: userFromBackend.name,
-      email: userFromBackend.email
-    };
-
-    setUser(userData);
-    localStorage.setItem('ned_user', JSON.stringify(userData));
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Erreur de connexion');
-    localStorage.removeItem('ned_user');
-    localStorage.removeItem('ned_token');
-    throw err;
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-  const logout = (): void => {
+  const logout = () => {
     setUser(null);
     setError(null);
     localStorage.removeItem('ned_user');
     localStorage.removeItem('ned_token');
   };
 
-  const value: AuthContextType = {
-    user,
-    isAuthenticated,
-    isLoading,
-    login,
-    logout,
-    error
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout, error }}>
       {children}
     </AuthContext.Provider>
   );
@@ -91,8 +72,6 @@ const login = async (userFromBackend: { _id: string; name: string; email: string
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
