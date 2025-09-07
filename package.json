@@ -1,0 +1,30 @@
+{
+  "name": "ned-studio",
+  "version": "1.0.0",
+  "description": "system modulaire",
+  "keywords": [
+    "modulary"
+  ],
+  "homepage": "https://github.com/Nkounga42/NED-studio#readme",
+  "bugs": {
+    "url": "https://github.com/Nkounga42/NED-studio/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nkounga42/NED-studio.git"
+  },
+  "license": "MIT",
+  "author": "nkoungagil@gmail.com",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm run dev",
+    "studio": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd frontend && npm run build",
+    "dev": "npm run studio"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
