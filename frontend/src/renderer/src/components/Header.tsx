@@ -34,14 +34,13 @@ const Header: React.FC = () => {
   const email = typeof user.email === "string" ? user.email : "";
 
   return (
-    <header className="bg-base-100 border-b border-base-300 px-4 py-2 shadow-sm">
+    <header className="bg-base-100 border-b border-base-300 px-4 py-1 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold text-base-content">NED Studio</h1>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Informations utilisateur */}
+        <div className="flex items-center gap-4"> 
           <div className="flex items-center gap-3">
             <div className="avatar placeholder">
               <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
@@ -54,7 +53,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Actions */}
+
           <div className="flex items-center gap-2">
             <div className="dropdown dropdown-end">
               <div
@@ -79,8 +78,7 @@ const Header: React.FC = () => {
                     <Settings className="w-4 h-4" />
                     Paramètres
                   </a>
-                </li>
-                <div className="divider my-1"></div>
+                </li> 
                 <li>
                   <button
                     onClick={handleLogout}

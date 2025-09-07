@@ -78,41 +78,7 @@ const PluginManager: React.FC = () => {
 
   // Plugin list
   return (
-    <div className="px-4 py-2 space-y-6">
-      <div className="flex items-center justify-between">
-
-
-
-
-        
-  
- {  selectedPlugin ?  
-      <div className="px-4 py-2 space-y-4">
-        <div className="flex items-center justify-between">
-          <button onClick={handleBackToList} className="btn btn-ghost btn-sm">
-            ← Retour
-          </button>
-          <h2 className="text-2xl font-bold">{selectedPlugin.manifest.name}</h2>
-        </div> 
-        <PluginRenderer plugin={selectedPlugin} /> 
-      </div>:
-   <>
-        <h2 className="text-lg font-bold">Gestionnaire de Plugins</h2>
-        <div className="flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="Rechercher un plugin..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className={`input input-bordered input-sm w-full max-w-md focus:outline-none ${filteredPlugins.length === 0  && "border-error bg-error/5"}`}
-        />
-        <button onClick={handleReloadPlugins} className="btn btn-outline btn-sm btn-primary">
-          Recharger
-        </button>
-      </div>
-      </>}
-      </div>
-      {/* Barre de recherche */}
+    <div className="px-4 py-2 space-y-6"> 
 
       {filteredPlugins.length === 0 ? (
         <div className="text-error text-sm">
