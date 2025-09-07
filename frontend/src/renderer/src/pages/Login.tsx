@@ -12,8 +12,8 @@ interface Props {
 export default function Login({ config }: Props): React.JSX.Element {
   const { forgotPasswordUrl, signUpUrl, brand } = useLoginConfig(config)
   const { login } = useAuth()
-  const [email, setEmail] = useState("jean.dupont@example.com")
-  const [password, setPassword] = useState("monSuperMotDePasse123")
+  const [email, setEmail] = useState("okoungagil@gmail.com")
+  const [password, setPassword] = useState("117Gv12Cg")
   const [remember, setRemember] = useState(true)
   const [showPwd, setShowPwd] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -36,7 +36,7 @@ export default function Login({ config }: Props): React.JSX.Element {
 
     try {
       // Appel à l'API de connexion
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

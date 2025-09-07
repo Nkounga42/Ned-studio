@@ -3,24 +3,17 @@ import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { useRegisterConfig, RegisterConfig } from '../hooks/useRegisterConfig'
 
-// Page d'inscription avec le même design que Login
-// - Validation côté client pour email, mots de passe, noms
-// - Vérification de correspondance des mots de passe
-// - Affichage/masquage des mots de passe
-// - Gestion état de chargement + messages d'erreur
-// - Accessible (labels, aria-*)
-
 interface Props {
   config?: Partial<RegisterConfig>
 }
 
 export default function Register({ config }: Props): React.JSX.Element {
-  const { onRegister, loginUrl, brand } = useRegisterConfig(config)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const { loginUrl, brand } = useRegisterConfig(config)
+  const [firstName, setFirstName] = useState('exauce')
+  const [lastName, setLastName] = useState('nkounga')
+  const [email, setEmail] = useState('nkoungagil@gmail.com')
+  const [password, setPassword] = useState('117Gv12Cg')
+  const [confirmPassword, setConfirmPassword] = useState('117Gv12Cg')
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirmPwd, setShowConfirmPwd] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -50,14 +43,12 @@ export default function Register({ config }: Props): React.JSX.Element {
       return
     }
 
-    setLoading(true)
-
-    try {
-      // Générer un nom d'utilisateur à partir de l'email
-      const username = email.split('@')[0] 
+    
+    try { 
       
+      setLoading(true)
       // Appel à l'API d'inscription
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch('http://localhost:3000/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,9 +58,10 @@ export default function Register({ config }: Props): React.JSX.Element {
           lastName,
           email,
           password,
-          // username
+          username: email.split('@')[0], 
         }),
       })
+
 
       const data = await response.json()
 
@@ -81,8 +73,9 @@ export default function Register({ config }: Props): React.JSX.Element {
       
       // Redirection vers la page de connexion après un court délai
       setTimeout(() => {
-        window.location.href = loginUrl
+        window.location.href = "/login"
       }, 2000)
+
     } catch (error) {
       console.error('Registration error:', error)
       toast.error(error instanceof Error ? error.message : 'Erreur lors de l\'inscription')
