@@ -4,6 +4,7 @@ import {
   LogOut,
   User
 } from 'lucide-react';
+
 import { setToggleSidebarFunction } from '../../utils/sidebarUtils';
 import { useMenuItems } from '../../hooks/useMenuItems';
 import { useAuth } from '../../contexts/AuthContext';
@@ -27,14 +28,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
 
   const sidebarVariants = {
     expanded: {
-      width: '16rem', // w-64
+      width: '14rem', // w-64
       transition: {
         duration: 0.3,
         ease: 'easeInOut'
       }
     },
     collapsed: {
-      width: '4rem', // w-16
+      width: '50px', // w-16
       transition: {
         duration: 0.3,
         ease: 'easeInOut'
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       }
     },
     collapsed: {
-      opacity: 0,
+       opacity: 0,
       transition: {
         duration: 0.1
       }
@@ -60,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
 
   return (
     <motion.div
-      className={`bg-base-200 h-screen shadow-lg relative ${className}`}
+      className={`bg-base-200 h-screen shadow-lg relative overflow-hidden ${className}`}
       variants={sidebarVariants}
       animate={isExpanded ? 'expanded' : 'collapsed'}
       initial="expanded"
@@ -68,8 +69,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
        
 
       {/* Header */}
-      <div className="p-2 border-b border-base-300">
-        <div className="flex items-center space-x-3">
+      <div className="px-3.5 py-2 border-b border-base-300">
+        <div className="flex items-center space-x-3 ">
           <div className="avatar" onClick={() => setIsExpanded(!isExpanded)}>
             <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
               <img
@@ -91,24 +92,26 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="p-2">
+      <nav className="" style={{ width: sidebarVariants.expanded.width }}>
         <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.id}>
               <a
                 href={item.href}
                 onClick={() => setActiveItem(item.id)}
-                className={`flex items-center space-x-3 p-2 rounded-lg transition-colors group relative ${
+                className={`flex items-center space-x-3 px-4 py-2 transition-colors group relative ${
                   item.isActive 
                     ? 'bg-primary text-primary-content' 
                     : 'hover:bg-base-300'
-                }`}
+                }`} 
               >
+
                 <item.icon className={`w-5 h-5 ${
                   item.isActive 
                     ? 'text-primary-content' 
                     : 'text-base-content group-hover:text-primary'
                 }`} />
+
                 <motion.span
                   className={`whitespace-nowrap ${
                     item.isActive 

@@ -42,11 +42,11 @@ const TabManager: React.FC = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Barre d’onglets */}
-      <div className="flex bg-gray-900 text-white p-2 gap-2">
+      <div className="flex bg-base-200 text-base-content border-b border-base-300 p-2 gap-2">
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`px-3 py-1 rounded cursor-pointer ${
+            className={`px-3 h-[28px] rounded cursor-pointer ${
               tab.id === activeId ? "bg-gray-700" : "bg-gray-800"
             }`}
             onClick={() => setActiveId(tab.id)}
@@ -67,8 +67,8 @@ const TabManager: React.FC = () => {
         ))}
       </div>
 
-      {/* Contenu des onglets (tous montés, seul l’actif visible) */}
-      <div className="flex-1 overflow-auto">
+
+      <div className="">
         {tabs.map((tab) =>
           tab.type === "plugins-home" ? (
             <div

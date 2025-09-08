@@ -10,8 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Toaster } from "sonner";
 import "./assets/main.css";
-import TabManager from "./components/TabManager";
-import Sidebar from "./components/Base/sidebar";
+import TabManager from "./components/TabManager"; 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -19,19 +18,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <>
           <Routes>
-            {/* Routes publiques */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Routes protégées */}
             <Route
               path="/"
               element={
-                <ProtectedRoute>
-                  <>
-                    <Sidebar />
-                    <TabManager />
-                  </>
+                <ProtectedRoute> 
+                    <TabManager /> 
                 </ProtectedRoute>
               }
             />
@@ -60,7 +54,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               }
             />
 
-            {/* 404 */}
             <Route path="*" element={
                 <ProtectedRoute>
               <div>404</div>
@@ -68,7 +61,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             } />
           </Routes>
 
-          {/* Toaster en dehors des Routes */}
           <Toaster />
         </>
       </BrowserRouter>
