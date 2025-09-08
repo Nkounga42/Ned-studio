@@ -41,9 +41,9 @@ const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
 
       {/* Description */}
       <div className="flex-1">
-        <p className="text-sm">{plugin.manifest.description}</p>
+        <p className="text-sm truncate">{plugin.manifest.description}</p>
         {plugin.manifest.author && (
-          <p className="text-xs mt-1 flex items-center gap-1 opacity-70">
+          <p className="text-xs mt-1 flex items-center gap-1 opacity-70 truncate">
             <User className="w-4 h-4" /> {plugin.manifest.author}
           </p>
         )}

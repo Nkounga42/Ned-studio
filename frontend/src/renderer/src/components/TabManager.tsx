@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import { LoadedPlugin } from "../../../types/plugin"
 import PluginManager from "@renderer/pages/PluginManager"
 import PluginRenderer from "@renderer/pages/PluginRenderer"
+import { useMenu } from "@renderer/contexts/MenuContext" // Hook menu
+import { User } from "lucide-react"
 
 interface Tab {
   id: string
@@ -12,22 +14,48 @@ interface Tab {
 const TabManager: React.FC = () => {
   const [tabs, setTabs] = useState<Tab[]>([{ id: "plugins", type: "plugins-home" }])
   const [activeId, setActiveId] = useState("plugins")
+  const { addMenuItem, removeMenuItem, setActiveItem } = useMenu()
 
-  // Gestion ouverture / fermeture de plugins
+  // Gestion des événements d’ouverture/fermeture de plugins
   useEffect(() => {
     const handlePluginOpen = (e: Event) => {
       const plugin = (e as CustomEvent<LoadedPlugin>).detail
-      const exists = tabs.find((t) => t.id === plugin.id)
-      if (!exists) {
-        setTabs((prev) => [...prev, { id: plugin.id, type: "plugin", plugin }])
-      }
+
+      // Ajouter l’onglet si inexistant
+      setTabs((prev) => {
+        const exists = prev.find((t) => t.id === plugin.id)
+        if (!exists) return [...prev, { id: plugin.id, type: "plugin", plugin }]
+        return prev
+      })
+
+      // Ajouter au menu
+      const PluginIcon = plugin.manifest.icon
+        ? () => <img src={plugin.manifest.icon} alt={plugin.manifest.name} className="w-4 h-4" />
+        : User
+      addMenuItem({
+        id: plugin.id,
+        label: plugin.manifest.name,
+        icon: PluginIcon,
+        closable: true,
+        href: undefined, // `/plugins/${plugin.id}`,
+        pluginComponent: plugin.module
+      })
+
+      // Activer l’onglet et le menu
       setActiveId(plugin.id)
+      setActiveItem(plugin.id)
     }
 
     const handlePluginClose = (e: Event) => {
       const id = (e as CustomEvent<string>).detail
+
+      // Supprimer l’onglet et le menu
       setTabs((prev) => prev.filter((t) => t.id !== id))
-      if (activeId === id) setActiveId("plugins")
+      removeMenuItem(id)
+
+      // Réactiver l’onglet par défaut si nécessaire
+      setActiveId((prev) => (prev === id ? "plugins" : prev))
+      setActiveItem((prev) => (prev === id ? "plugins" : prev))
     }
 
     window.addEventListener("plugin-opened", handlePluginOpen)
@@ -37,10 +65,38 @@ const TabManager: React.FC = () => {
       window.removeEventListener("plugin-opened", handlePluginOpen)
       window.removeEventListener("plugin-closed", handlePluginClose)
     }
-  }, [tabs, activeId])
+  }, [addMenuItem, removeMenuItem, setActiveItem])
+
+  
+  useEffect(() => {
+    const handlePluginClose = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail
+
+      // Supprime l’onglet
+      setTabs((prev) => prev.filter((t) => t.id !== id))
+
+      // Supprime le menu
+      removeMenuItem(id)
+
+      // Réactive un onglet par défaut
+      setActiveId((prev) => (prev === id ? "plugins" : prev))
+      setActiveItem((prev) => (prev === id ? "plugins" : prev))
+    }
+
+    window.addEventListener("plugin-closed", handlePluginClose)
+    return () => window.removeEventListener("plugin-closed", handlePluginClose)
+  }, [removeMenuItem, setActiveItem])
+
+  // Fonction appelée depuis PluginManager
+  const handlePluginSelect = (plugin: LoadedPlugin) => {
+    window.dispatchEvent(new CustomEvent("plugin-opened", { detail: plugin }))
+  }
 
   return (
     <div className="flex flex-col h-screen">
+      {/* Liste des plugins */}
+      <PluginManager handlePluginSelect={handlePluginSelect} />
+
       {/* Barre d’onglets */}
       <div className="flex bg-base-200 text-base-content border-b border-base-300 p-2 gap-2">
         {tabs.map((tab) => (
@@ -49,7 +105,10 @@ const TabManager: React.FC = () => {
             className={`px-3 h-[28px] rounded cursor-pointer ${
               tab.id === activeId ? "bg-gray-700" : "bg-gray-800"
             }`}
-            onClick={() => setActiveId(tab.id)}
+            onClick={() => {
+              setActiveId(tab.id)
+              setActiveItem(tab.id)
+            }}
           >
             {tab.type === "plugins-home" ? "Plugins" : tab.plugin?.manifest.name}
             {tab.type === "plugin" && (
@@ -67,8 +126,8 @@ const TabManager: React.FC = () => {
         ))}
       </div>
 
-
-      <div className="">
+      {/* Contenu des onglets */}
+      <div className="flex-1 overflow-auto">
         {tabs.map((tab) =>
           tab.type === "plugins-home" ? (
             <div
@@ -76,7 +135,7 @@ const TabManager: React.FC = () => {
               style={{ display: tab.id === activeId ? "block" : "none" }}
               className="h-full"
             >
-               <PluginManager /> 
+              <PluginManager handlePluginSelect={handlePluginSelect} />
             </div>
           ) : (
             <div
@@ -84,7 +143,7 @@ const TabManager: React.FC = () => {
               style={{ display: tab.id === activeId ? "block" : "none" }}
               className="h-full"
             >
-              <PluginRenderer plugin={tab.plugin!} /> 
+              <PluginRenderer plugin={tab.plugin!} />
             </div>
           )
         )}

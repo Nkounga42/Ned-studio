@@ -12,10 +12,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
-    return <div>Chargement...</div>;
-  }
-
+  
   if (!isAuthenticated) {
     // Non connecté → redirige vers login et conserve l'URL d'origine
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -28,7 +25,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         <div className="flex-1 relative " >
           <Header />
           <div style={{ height: 'calc(100vh - 48px)'}} className="overflow-auto">
-            {children}  
+              { isLoading ? <div>Chargement...</div> : children }
           </div>
         </div>
       </div>

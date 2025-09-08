@@ -34,7 +34,7 @@ const Header: React.FC = () => {
   const email = typeof user.email === "string" ? user.email : "";
 
   return (
-    <header className="bg-base-100 border-b border-base-300 px-4 py-1 shadow-sm sticky top-0 left-0 right-0 z-10">
+    <header className="bg-base-100 border-b border-base-300 px-4 py-1 sticky top-0 left-0 right-0 z-10">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold text-base-content">NED Studio</h1>
