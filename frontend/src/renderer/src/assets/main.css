@@ -26,7 +26,7 @@ body {
   }
 
   
-   
+/*    
 @plugin "daisyui/theme" {
   name: "light";
   default: false;
@@ -162,4 +162,4 @@ body {
   --border: 2px;
   --depth: 1;
   --noise: 0;
-}
+} */

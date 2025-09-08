@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Sidebar from "./Base/sidebar";
+import Header from "./Base/Header";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -22,10 +23,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   return (
     
-      <div className="flex">
-      <Sidebar />
-        <div className="flex-1 overflow-auto">
-        {children}
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 relative " >
+          <Header />
+          <div style={{ height: 'calc(100vh - 48px)'}} className="overflow-auto">
+            {children}  
+          </div>
         </div>
       </div>
     );
