@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import PluginManager from './PluginManager'
-import PluginRenderer from './PluginRenderer'
-import { LoadedPlugin } from '../../../types/plugin'
+import PluginRenderer from './PluginRenderer' 
+import { LoadedPlugin } from '@/types/plugin'
 
 const PluginWorkspace: React.FC = () => {
   const [openPlugins, setOpenPlugins] = useState<Record<string, LoadedPlugin>>({})

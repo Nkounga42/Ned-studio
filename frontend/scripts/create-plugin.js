@@ -170,7 +170,7 @@ const ${componentName}Plugin: React.FC = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'Inter, -apple-system, sans-serif' }}>
       <h1 style={{ color: '#333', marginBottom: '20px' }}>
-        🔌 ${pluginName}
+        🔌 ${pluginName} 
       </h1>
       
       <div style={{ marginBottom: '20px' }}>

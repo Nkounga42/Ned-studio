@@ -73,7 +73,6 @@ const useMenuItems = () => {
   };
 
   useEffect(() => {
-    // Si tu veux définir actif selon URL
     const currentPath = window.location.pathname;
     const activeItem = menuItems.find(item => item.href === currentPath);
     if (activeItem) setActiveItem(activeItem.id);
@@ -91,107 +90,4 @@ const useMenuItems = () => {
 };
 
 export default useMenuItems;
-
-
-// import { useState, useEffect } from 'react';
-// import { Home, FileText, Search, Bell, User, Settings, Folder, Download, Box } from 'lucide-react';
-
-// export interface MenuItem {
-//   id: string;
-//   icon: React.ComponentType<any>;
-//   label: string;
-//   href?: string;
-//   badge?: number;
-//   isActive?: boolean;
-//   submenu?: MenuItem[];
-//   closable?: boolean;
-//   pluginComponent?: React.ComponentType<any>;
-// }
-
-// const useMenuItems = () => {
-//   const [activeItemId, setActiveItemId] = useState<string>("home");
-
-//   // Liste des items de base
-//   const [menuItems, setMenuItems] = useState<MenuItem[]>([
-//     { id: 'home', icon: Home, label: 'Accueil', href: '/' },
-//     { id: 'documents', icon: FileText, label: 'Documents', href: '/documents' },
-//     { id: 'modules', icon: Box, label: 'Modules', href: '/modules' },
-//     { id: 'projects', icon: Folder, label: 'Projets', href: '/projects' },
-//     { id: 'search', icon: Search, label: 'Recherche', href: '/search' },
-//     { id: 'notifications', icon: Bell, label: 'Notifications', href: '/notifications', badge: 3 },
-//     { id: 'downloads', icon: Download, label: 'Téléchargements', href: '/downloads' },
-//     { id: 'profile', icon: User, label: 'Profil', href: '/profile' },
-//     { id: 'settings', icon: Settings, label: 'Paramètres', href: '/settings' }
-//   ]);
-
-//   // Appliquer l’état actif sur chaque item
-//   const menuItemsWithActive = menuItems.map(item => ({
-//     ...item,
-//     isActive: item.id === activeItemId
-//   }));
-
-  
-
-  
-//   // Fonction pour changer l’item actif
-//   const setActiveItem = (id: string) => {
-//     setActiveItemId(id);
-//   };
-
-//   // Ajouter un item au menu
-//   // const addMenuItem = (item: MenuItem) => {
-//   //   setMenuItems(prev => {
-//   //     const exists = prev.find(i => i.id === item.id);
-//   //     if (exists) return prev; // éviter les doublons
-//   //     return [...prev, item];
-//   //   });
-//   // };
-
-//  const addMenuItem = (item: MenuItem) => {
-//   setMenuItems(prev => [...prev, item]);
-//   setActiveItem(item.id); // rend l’item actif
-// };
-
-
-  
-//   const removeMenuItem = (id: string) => {
-//     setMenuItems(prev => prev.filter(item => item.id !== id));
-//   };
-
-//   // Mettre à jour un item existant
-//   const updateMenuItem = (id: string, updates: Partial<MenuItem>) => {
-//     setMenuItems(prev =>
-//       prev.map(item => (item.id === id ? { ...item, ...updates } : item))
-//     );
-//   };
-
-//   // Mettre à jour le badge d’un item
-//   const updateBadge = (id: string, count: number) => {
-//     updateMenuItem(id, { badge: count > 0 ? count : undefined });
-//   };
-
-//   // Détection automatique de l’item actif selon l’URL
-//   useEffect(() => {
-//     const currentPath = window.location.pathname;
-//     const activeItem = menuItems.find(
-//       item =>
-//         item.href === currentPath ||
-//         item.submenu?.some(subItem => subItem.href === currentPath)
-//     );
-//     if (activeItem) {
-//       setActiveItemId(activeItem.id);
-//     }
-//   }, [menuItems]);
-
-//   return {
-//     menuItems: menuItemsWithActive,
-//     setActiveItem,
-//     addMenuItem,
-//     removeMenuItem,
-//     updateMenuItem,
-//     updateBadge
-//   };
-// };
-
-// export default useMenuItems;
-
+ 

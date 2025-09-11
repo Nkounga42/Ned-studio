@@ -2,6 +2,7 @@ import { app, ipcMain, dialog } from 'electron'
 import { readdir, readFile, access } from 'fs/promises'
 import { join } from 'path'
 import { PluginManifest, LoadedPlugin } from '../types/plugin'
+import { toast, Toaster } from 'sonner'
 
 export class PluginManager {
   private plugins: Map<string, LoadedPlugin> = new Map()
@@ -30,6 +31,7 @@ export class PluginManager {
     ipcMain.handle('pluginAPI:showNotification', (_, message: string, type: string = 'info') => {
       // Implementation for showing notifications
       console.log(`[${type.toUpperCase()}] ${message}`)
+      toast(message)
       return true
     })
 

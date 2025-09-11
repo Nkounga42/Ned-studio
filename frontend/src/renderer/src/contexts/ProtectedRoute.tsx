@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import Sidebar from "./Base/sidebar";
-import Header from "./Base/Header";
+import Sidebar from "../components/Base/sidebar";
+import Header from "../components/Base/Header";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

@@ -16,7 +16,6 @@ const TabManager: React.FC = () => {
   const [activeId, setActiveId] = useState("plugins")
   const { addMenuItem, removeMenuItem, setActiveItem } = useMenu()
 
-  // Gestion des événements d’ouverture/fermeture de plugins
   useEffect(() => {
     const handlePluginOpen = (e: Event) => {
       const plugin = (e as CustomEvent<LoadedPlugin>).detail
@@ -87,17 +86,14 @@ const TabManager: React.FC = () => {
     return () => window.removeEventListener("plugin-closed", handlePluginClose)
   }, [removeMenuItem, setActiveItem])
 
-  // Fonction appelée depuis PluginManager
   const handlePluginSelect = (plugin: LoadedPlugin) => {
     window.dispatchEvent(new CustomEvent("plugin-opened", { detail: plugin }))
   }
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Liste des plugins */}
       <PluginManager handlePluginSelect={handlePluginSelect} />
 
-      {/* Barre d’onglets */}
       <div className="flex bg-base-200 text-base-content border-b border-base-300 p-2 gap-2">
         {tabs.map((tab) => (
           <div
