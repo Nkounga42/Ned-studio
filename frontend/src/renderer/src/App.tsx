@@ -1,39 +1,76 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import Sidebar from "./components/Base/sidebar"
-import TabManager from "./components/TabManager"
+import PluginManager from "./pages/PluginManager"
+import PluginRenderer from "./pages/PluginRenderer"
 import { useMenu } from "./contexts/MenuContext"
 import NotificationsPage from "./pages/NotificationsPage"
 import TestPage from "./pages/TestPage"
 import HomePage from "./pages/HomePage"
 import DocumentsPage from "./pages/DocumentsPage"
+import { LoadedPlugin } from "../../types/plugin"
+import { User } from "lucide-react"
 
 const App: React.FC = () => {
-  const { setActiveItem } = useMenu()
+  const { setActiveItem, addMenuItem, removeMenuItem } = useMenu()
   const { menuItems } = useMenu()
   const activeItem = menuItems.find((item) => item.isActive)
+  
+  // État pour gérer les plugins ouverts
+  const [openPlugins, setOpenPlugins] = useState<LoadedPlugin[]>([])
 
   const handlePluginClose = (pluginId: string) => {
     window.dispatchEvent(new CustomEvent("plugin-closed", { detail: pluginId }))
   }
 
-  // Écouter l'événement plugin-opened depuis la sidebar
+  // Fonction pour ouvrir un plugin depuis PluginManager
+  const handlePluginSelect = (plugin: LoadedPlugin) => {
+    // Vérifier si le plugin est déjà ouvert
+    const isAlreadyOpen = openPlugins.find(p => p.id === plugin.id)
+    
+    if (!isAlreadyOpen) {
+      // Ajouter le plugin à la liste des plugins ouverts
+      setOpenPlugins(prev => [...prev, plugin])
+      
+      // Ajouter l'item au menu
+      const PluginIcon = plugin.manifest.icon
+        ? () => <img src={plugin.manifest.icon} alt={plugin.manifest.name} className="w-4 h-4" />
+        : User
+      addMenuItem({
+        id: plugin.id,
+        label: plugin.manifest.name,
+        icon: PluginIcon,
+        closable: true,
+        href: undefined
+      })
+    }
+    
+    // Activer le plugin
+    setActiveItem(plugin.id)
+  }
+
+  // Écouter l'événement plugin-closed pour supprimer les plugins
   useEffect(() => {
-    const handlePluginOpened = (event: CustomEvent) => {
-      const pluginItem = event.detail
-      console.log("Plugin opened:", pluginItem)
+    const handlePluginClosed = (event: CustomEvent) => {
+      const pluginId = event.detail
       
-      // Activer d'abord la section modules pour que TabManager soit visible
-      setActiveItem("modules")
+      // Supprimer le plugin de la liste
+      setOpenPlugins(prev => prev.filter(p => p.id !== pluginId))
       
-      // Le TabManager se chargera d'activer le bon plugin
+      // Supprimer l'item du menu
+      removeMenuItem(pluginId)
+      
+      // Rediriger vers modules si c'était le plugin actif
+      if (activeItem?.id === pluginId) {
+        setActiveItem("modules")
+      }
     }
 
-    window.addEventListener("plugin-opened", handlePluginOpened as EventListener)
+    window.addEventListener("plugin-closed", handlePluginClosed as EventListener)
     
     return () => {
-      window.removeEventListener("plugin-opened", handlePluginOpened as EventListener)
+      window.removeEventListener("plugin-closed", handlePluginClosed as EventListener)
     }
-  }, [setActiveItem])
+  }, [removeMenuItem, setActiveItem, activeItem])
 
  
 
@@ -51,23 +88,19 @@ const App: React.FC = () => {
           {activeItem?.id === "profile" && <ProfilePage />}
           {activeItem?.id === "settings" && <SettingsPage />}
           {activeItem?.id === "test" && <TestPage />}
-          {(activeItem?.id === "modules" || activeItem?.closable) && <TabManager />}
-
-
+          {activeItem?.id === "modules" && <PluginManager handlePluginSelect={handlePluginSelect} />}
+          {/* Rendu des plugins ouverts */}
+          {openPlugins.map(plugin => 
+            activeItem?.id === plugin.id && (
+              <PluginRenderer key={plugin.id} plugin={plugin} />
+            )
+          )}
         </div>
       </main>
     </div>
   )
 }
-
-// Composants de pages exemple
-
-// const DocumentsPage = () => (
-//   <div className="p-6">
-//     <h1 className="text-2xl font-bold mb-4">Documents</h1>
-//     <p>Gérez vos documents ici.</p>
-//   </div>
-// )
+ 
 
 const ProjectsPage = () => (
   <div className="p-6">

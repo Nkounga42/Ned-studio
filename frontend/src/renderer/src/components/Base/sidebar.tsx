@@ -136,8 +136,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", onPluginClose }) => {
             <li key={item.id}>
               <div className="relative group">
                 <a
+                  // href={item.href}
                   onClick={() => {
-                    // Activer l'item dans le menu (cela va déclencher l'affichage du bon composant)
+                    // Activer l'item dans le menu (plugins et items normaux)
                     setActiveItem(item.id)
                   }}
                   className={`flex items-center space-x-3 mx-1 px-3 py-1.5 rounded-box transition-colors group relative cursor-pointer ${

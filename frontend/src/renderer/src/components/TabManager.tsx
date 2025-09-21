@@ -39,9 +39,9 @@ const TabManager: React.FC = () => {
         href: undefined
       })
 
-      // Activer l'onglet dans TabManager
+      // Activer l’onglet dans TabManager
       setActiveId(plugin.id)
-      console.log(`Plugin ${plugin.id} opened, setting active tab to:`, plugin.id)
+      // Ne pas activer dans le menu principal - c'est géré par App.tsx
     }
 
 
@@ -114,9 +114,6 @@ const TabManager: React.FC = () => {
   const handlePluginSelect = (plugin: LoadedPlugin) => {
     window.dispatchEvent(new CustomEvent("plugin-opened", { detail: plugin }))
   }
-
-  // Debug: afficher l'état actuel
-  console.log("TabManager render - activeId:", activeId, "tabs:", tabs.map(t => t.id))
 
   return (
     <div className="flex flex-col h-screen"> 
