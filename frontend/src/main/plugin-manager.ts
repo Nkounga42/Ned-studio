@@ -63,11 +63,11 @@ export class PluginManager {
 
   async scanPlugins(): Promise<LoadedPlugin[]> {
     try {
-      console.log('Scanning plugins in:', this.pluginsPath)
+      // console.log('Scanning plugins in:', this.pluginsPath)
       
       // Ensure plugins directory exists
       await access(this.pluginsPath).catch(async () => {
-        console.log('Plugins directory does not exist, creating:', this.pluginsPath)
+        // console.log('Plugins directory does not exist, creating:', this.pluginsPath)
         const fs = await import('fs/promises')
         await fs.mkdir(this.pluginsPath, { recursive: true })
       })
@@ -75,7 +75,7 @@ export class PluginManager {
       const entries = await readdir(this.pluginsPath, { withFileTypes: true })
       const pluginDirs = entries.filter(entry => entry.isDirectory())
       
-      console.log('Found plugin directories:', pluginDirs.map(d => d.name))
+      // console.log('Found plugin directories:', pluginDirs.map(d => d.name))
 
       this.plugins.clear()
 
@@ -84,7 +84,7 @@ export class PluginManager {
           const pluginPath = join(this.pluginsPath, dir.name)
           const manifestPath = join(pluginPath, 'plugin.json')
           
-          console.log(`Loading plugin ${dir.name} from ${manifestPath}`)
+          // console.log(`Loading plugin ${dir.name} from ${manifestPath}`)
           
           const manifestContent = await readFile(manifestPath, 'utf8')
           const manifest: PluginManifest = JSON.parse(manifestContent)
@@ -100,10 +100,10 @@ export class PluginManager {
           const entryPath = join(pluginPath, manifest.entry)
           await access(entryPath)
           
-          console.log(`Successfully loaded plugin: ${manifest.name}`)
+          // console.log(`Successfully loaded plugin: ${manifest.name}`)
           this.plugins.set(dir.name, plugin)
         } catch (error) {
-          console.error(`Failed to load plugin ${dir.name}:`, error)
+          // console.error(`Failed to load plugin ${dir.name}:`, error)
           this.plugins.set(dir.name, {
             id: dir.name,
             manifest: { name: dir.name, version: '0.0.0', description: 'Failed to load', entry: '' },
@@ -114,7 +114,7 @@ export class PluginManager {
         }
       }
 
-      console.log(`Loaded ${this.plugins.size} plugins total`)
+      // console.log(`Loaded ${this.plugins.size} plugins total`)
       return Array.from(this.plugins.values())
     } catch (error) {
       console.error('Failed to scan plugins:', error)
@@ -137,7 +137,7 @@ export class PluginManager {
       
       return bundleContent
     } catch (error) {
-      console.error(`Failed to load plugin component ${pluginId}:`, error)
+      // console.error(`Failed to load plugin component ${pluginId}:`, error)
       plugin.error = error instanceof Error ? error.message : 'Failed to load component'
       plugin.isLoaded = false
       this.plugins.set(pluginId, plugin)
@@ -201,7 +201,7 @@ export class PluginManager {
         message: 'Unsupported file format. Please use .js, .ts, or .zip files.'
       }
     } catch (error) {
-      console.error('Failed to import plugin:', error)
+      // console.error('Failed to import plugin:', error)
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Unknown error occurred'

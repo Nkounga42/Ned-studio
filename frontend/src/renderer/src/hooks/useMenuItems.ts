@@ -18,16 +18,16 @@ const useMenuItems = () => {
   const { unreadCount } = useNotifications();
   
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
-    { id: "home", icon: Home, label: "Accueil" },
-    { id: "documents", icon: FileText, label: "Documents" },
-    { id: "modules", icon: Box, label: "Modules" },
-    { id: "projects", icon: Folder, label: "Projets" },
-    { id: "search", icon: Search, label: "Recherche" },
-    { id: "notifications", icon: Bell, label: "Notifications" },
-    { id: "downloads", icon: Download, label: "Téléchargements" },
-    { id: "profile", icon: User, label: "Profil" },
-    { id: "settings", icon: Settings, label: "Paramètres" },
-    { id: "test", icon: Bug, label: "Tests" }
+    { id: "home", icon: Home, label: "Accueil", isActive: true },
+    { id: "documents", icon: FileText, label: "Documents", isActive: false },
+    { id: "modules", icon: Box, label: "Modules", isActive: false },
+    { id: "projects", icon: Folder, label: "Projets", isActive: false },
+    { id: "search", icon: Search, label: "Recherche", isActive: false },
+    { id: "notifications", icon: Bell, label: "Notifications", isActive: false },
+    { id: "downloads", icon: Download, label: "Téléchargements", isActive: false },
+    { id: "profile", icon: User, label: "Profil", isActive: false },
+    { id: "settings", icon: Settings, label: "Paramètres", isActive: false },
+    { id: "test", icon: Bug, label: "Tests", isActive: false }
   ]);
 
   const [activeItemId, setActiveItemId] = useState("home");

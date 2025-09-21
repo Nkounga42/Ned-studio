@@ -18,11 +18,11 @@ const ImportUrlModal: React.FC<ImportUrlModalProps> = ({
   const [url, setUrl] = useState("")
   const notify = useNotify()
 
-  const handleImport = async (): Promise<void> => {
+  const handleImport = async () => {
     if (!url.trim()) {
       notify.error({
-        title: "URL manquante",
-        message: "Veuillez saisir une URL valide"
+        title: 'URL manquante',
+        message: 'Veuillez saisir une URL valide'
       })
       return
     }
@@ -31,7 +31,7 @@ const ImportUrlModal: React.FC<ImportUrlModalProps> = ({
       await onImport(url.trim())
       setUrl("")
       onClose()
-    } catch {
+    } catch (error) {
       // L'erreur est gérée par le composant parent
     }
   }

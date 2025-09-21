@@ -36,15 +36,15 @@ export const HeaderSection = ({ search, setSearch, rightChildren }: { search: st
 
   return (
     <div className="sticky top-0 px-4 py-3 z-10 bg-base-100/70 border-b border-base-300 backdrop-blur-xl">
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="text-2xl font-bold">Gestionnaire de Modules</h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-xl font-semibold">Gestionnaire de Modules</h1>
         <div className="flex gap-2">
           {rightChildren && rightChildren}
           <AccountAvatar />
         </div>
       </div>
 
-      {!search && !setSearch && (
+      {setSearch &&  (
         <div className="flex items-center justify-between mb-2">
           <div className="relative flex-1 max-w-md">
             <div className="absolute z-10 inset-y-0 top-0 left-0 pl-3 flex items-center pointer-events-none">

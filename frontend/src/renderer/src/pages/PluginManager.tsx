@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Search, Upload, Download, FolderOpen, X } from 'lucide-react'
+import { Search, Upload, Download, FolderOpen, X, RefreshCcw } from 'lucide-react'
 import { LoadedPlugin } from '../../../types/plugin'
 import ImportUrlModal from '../components/ImportUrlModal'
 import { useNotify } from '../hooks/useNotify'
@@ -205,59 +205,76 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
   // Plugin list
   return (
     <div className="">
+      {/* Header avec titre et boutons d'importation */}
 
       <HeaderSection
         search={search}
         setSearch={setSearch}
         rightChildren={
-          <div className="flex gap-2">
-            {/* Bouton d'importation de fichier */}
-            <label className="btn btn-primary btn-sm gap-2 cursor-pointer">
-              <Upload className="h-4 w-4" />
-              Importer fichier
-              <input
-                type="file"
-                accept=".zip,.tar.gz,.tgz,.js,.ts"
-                onChange={handleFileImport}
-                className="hidden"
+          <div className="dropdown dropdown-bottom">
+          <label tabIndex={0} className="btn btn-sm m-1">
+            Importer
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content -translate-x-1/2 menu p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            {/* Importer fichier */}
+            <li>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Upload className="h-4 w-4" />
+                Importer fichier
+                <input
+                  type="file"
+                  accept=".zip,.tar.gz,.tgz,.js,.ts"
+                  onChange={handleFileImport}
+                  className="hidden"
+                  disabled={importing}
+                />
+              </label>
+            </li>
+        
+            {/* Importer dossier */}
+            <li>
+              <button
+                onClick={handleFolderImport}
                 disabled={importing}
-              />
-            </label>
-
-            {/* Bouton d'importation de dossier */}
-            <button
-              onClick={handleFolderImport}
-              disabled={importing}
-              className="btn btn-secondary btn-sm gap-2"
-            >
-              <FolderOpen className="h-4 w-4" />
-              Importer dossier
-            </button>
-
-            {/* Bouton pour ouvrir la modal d'URL */}
-            <button
-              onClick={() => setShowImportModal(true)}
-              disabled={importing}
-              className="btn btn-accent btn-sm gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Depuis URL
-            </button>
-
-            {/* Bouton pour recharger les plugins */}
-            <button
-              onClick={async () => {
-                setLoading(true)
-                await window.api.plugins.reload()
-                await loadPlugins()
-              }}
-              disabled={loading || importing}
-              className="btn btn-sm gap-2"
-            >
-              <Search className="h-4 w-4" />
-              Recharger
-            </button>
-          </div>
+                className="flex items-center gap-2"
+              >
+                <FolderOpen className="h-4 w-4" />
+                Importer dossier
+              </button>
+            </li>
+        
+            {/* Depuis URL */}
+            <li>
+              <button
+                onClick={() => setShowImportModal(true)}
+                disabled={importing}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Depuis URL
+              </button>
+            </li>
+        
+            {/* Recharger */}
+            <li>
+              <button
+                onClick={async () => {
+                  setLoading(true)
+                  await window.api.plugins.reload()
+                  await loadPlugins()
+                }}
+                disabled={loading || importing}
+                className="flex items-center gap-2"
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Recharger
+              </button>
+            </li>
+          </ul>
+           </div>
         }
       />
        
