@@ -3,6 +3,9 @@ import Sidebar from "./components/Base/sidebar"
 import TabManager from "./components/TabManager"
 import { useMenu } from "./contexts/MenuContext"
 import PluginRenderer from "./pages/PluginRenderer"
+import NotificationsPage from "./pages/NotificationsPage"
+import TestPage from "./pages/TestPage"
+import HomePage from "./pages/HomePage"
 
 const App: React.FC = () => {
   const { menuItems, addMenuItem, removeMenuItem, updateMenuItem, setActiveItem } = useMenu()
@@ -12,15 +15,13 @@ const App: React.FC = () => {
     window.dispatchEvent(new CustomEvent("plugin-closed", { detail: pluginId }))
   }
 
-  const shouldShowTabManager = () => {
-    return activeItem?.closable || activeItem?.id === "plugins-home"
-  }
+ 
 
   return (
     <div className="app-layout flex h-screen">
       <Sidebar onPluginClose={handlePluginClose} />
       <main className="flex-1 overflow-hidden">
-        <div className="h-full p-4">
+        <div className="h-full overflow-y-auto">
           {activeItem?.id === "home" && <HomePage />}
           {activeItem?.id === "documents" && <DocumentsPage />}
           {activeItem?.id === "projects" && <ProjectsPage />}
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           {activeItem?.id === "downloads" && <DownloadsPage />}
           {activeItem?.id === "profile" && <ProfilePage />}
           {activeItem?.id === "settings" && <SettingsPage />}
+          {activeItem?.id === "test" && <TestPage />}
           {activeItem?.id === "modules" && (
             <TabManager
               addMenuItem={addMenuItem}
@@ -38,14 +40,14 @@ const App: React.FC = () => {
               activeItemId={activeItem?.id}
             />
           )}
-           {menuItems.map((item) => (
-  <div
-    key={item.id}
-    style={{ display: item.closable && activeItem?.id === item.id ? "block" : "none" }}
-  >
-    <PluginRenderer plugin={item} />
-  </div>
-))}
+          {menuItems.map((item) => (
+            <div
+              key={item.id}
+              style={{ display: item.closable && activeItem?.id === item.id ? "block" : "none" }}
+            >
+              <PluginRenderer plugin={item} />
+            </div>
+          ))}
 
 
         </div>
@@ -55,12 +57,6 @@ const App: React.FC = () => {
 }
 
 // Composants de pages exemple
-const HomePage = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Bienvenue dans NED Studio</h1>
-    <p>Ceci est la page d'accueil de votre application.</p>
-  </div>
-)
 
 const DocumentsPage = () => (
   <div className="p-6">
@@ -83,12 +79,6 @@ const SearchPage = () => (
   </div>
 )
 
-const NotificationsPage = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Notifications</h1>
-    <p>Vos notifications apparaissent ici.</p>
-  </div>
-)
 
 const DownloadsPage = () => (
   <div className="p-6">

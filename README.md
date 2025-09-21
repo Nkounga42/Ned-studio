@@ -1,8 +1,44 @@
 # 🎨 NED Studio
 
-> **Système modulaire de développement créatif**
+<div align="center">
+  <img src="./assets/logo.png" alt="NED Studio Logo" width="200"/>
+  
+  > **Système modulaire de développement créatif**
+</div>
 
 NED Studio est une application Electron moderne qui combine un frontend React/TypeScript avec un backend Node.js/Express, offrant un environnement de développement modulaire et extensible.
+
+## 📸 Aperçu de l'application
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224343.png" alt="Interface principale de NED Studio" width="800"/>
+  <p><em>Interface module de NED Studio (theme par defaut)</em></p>
+</div>
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224401.png" alt="Page de connexion" width="800"/>
+  <p><em>Sidebar reduite</em></p>
+</div>
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224604.png" alt="Système de plugins" width="800"/>
+  <p><em>page des modules en darker mode</em></p>
+</div>
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224650.png" alt="Interface utilisateur" width="800"/>
+  <p><em>page des modules en light mode</em></p>
+</div>
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224904.png" alt="Page de connexion" width="800"/>
+  <p><em>page de connexion</em></p>
+</div>
+
+<div align="center">
+  <img src="./assets/Capture d'écran 2025-09-13 224946.png" alt="Page d'inscription" width="800"/>
+  <p><em>page d'inscription</em></p>
+</div>
 
 ## 📋 Table des matières
 

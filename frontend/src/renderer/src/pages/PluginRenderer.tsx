@@ -21,10 +21,17 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
       setLoading(true)
       setError(null)
 
+      console.log('Loading plugin:', plugin.id)
+      console.log('Plugin path:', plugin.path)
+      console.log('Plugin manifest:', plugin.manifest)
+
       // Load the plugin bundle
       const bundleCode = await window.api.plugins.load(plugin.id)
+      console.log('Bundle code received:', bundleCode ? 'Yes' : 'No')
+      console.log('Bundle code length:', bundleCode?.length || 0)
+      
       if (!bundleCode) {
-        throw new Error('Failed to load plugin bundle')
+        throw new Error(`Failed to load plugin bundle for ${plugin.id}. Bundle code is empty.`)
       }
 
       // Create a safe execution environment for the plugin

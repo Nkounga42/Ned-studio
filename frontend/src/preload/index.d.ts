@@ -10,6 +10,7 @@ declare global {
         getAll: () => Promise<LoadedPlugin[]>;
         load: (pluginId: string) => Promise<string | null>;
         reload: () => Promise<LoadedPlugin[]>;
+        import: (fileBuffer: ArrayBuffer, fileName: string) => Promise<{ success: boolean; message: string; pluginId?: string }>;
       };
       pluginAPI: {
         showNotification: (message: string, type?: string) => Promise<boolean>;

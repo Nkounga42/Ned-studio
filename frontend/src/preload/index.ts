@@ -8,6 +8,7 @@ const api = {
     getAll: () => ipcRenderer.invoke('plugin:getAll'),
     load: (pluginId: string) => ipcRenderer.invoke('plugin:load', pluginId),
     reload: () => ipcRenderer.invoke('plugin:reload'),
+    import: (fileBuffer: ArrayBuffer, fileName: string) => ipcRenderer.invoke('plugin:import', fileBuffer, fileName),
   },
 
   // Plugin API

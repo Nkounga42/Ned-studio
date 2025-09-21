@@ -36,7 +36,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", onPluginClose }) => {
       "profile",
       "settings",
       "plugins-home",
-      "modules"
+      "modules",
+      "test"
     ]
     return !staticItems.includes(itemId)
   }

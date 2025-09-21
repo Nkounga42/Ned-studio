@@ -1,21 +1,13 @@
 import React from "react";
 import { useAuth } from "@renderer/contexts/AuthContext";
-import { LogOut, Settings, User } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const Header: React.FC = () => {
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
+const AccountAvatar: React.FC = () => {
+  const { user } = useAuth();
 
   if (!user) return null;
 
-  // Gestion sécurisée de displayName
   const displayName = (() => {
     if (!user.username) return "Utilisateur";
     if (typeof user.username === "string") return user.username;
@@ -29,72 +21,53 @@ const Header: React.FC = () => {
   })();
 
   const firstLetter = displayName.charAt(0).toUpperCase();
-
-  // Gestion sécurisée de l'email
-  const email = typeof user.email === "string" ? user.email : "";
-
   return (
-    <header className="bg-base-100 border-b border-base-300 px-4 py-1 sticky top-0 left-0 right-0 z-10">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold text-base-content">NED Studio</h1>
-        </div>
-
-        <div className="flex items-center gap-4"> 
-          <div className="flex items-center gap-3">
-            <div className="avatar placeholder">
-              <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                <span className="text-sm font-medium">{firstLetter}</span>
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-sm font-medium text-base-content">{displayName}</p>
-              {email && <p className="text-xs text-base-content/70">{email}</p>}
-            </div>
-          </div>
-
-
-          <div className="flex items-center gap-2">
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-sm"
-              >
-                <Settings className="w-4 h-4" />
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-              >
-                <li>
-                  <a className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Profil
-                  </a>
-                </li>
-                <li>
-                  <a className="flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    Paramètres
-                  </a>
-                </li> 
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 text-error hover:bg-error/10"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Déconnexion
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
+    <Link to="/profile" className="flex items-center gap-3">
+      <div className="avatar placeholder">
+        <div className="bg-primary text-primary-content rounded-full text-sm font-medium w-8 h-8 flex items-center justify-center">
+          {firstLetter}
         </div>
       </div>
-    </header>
+    </Link>
   );
 };
 
-export default Header;
+export const HeaderSection = ({ search, setSearch, rightChildren }: { search: string, setSearch: (search: string) => void, rightChildren: React.ReactNode }) => {
+
+  return (
+    <div className="sticky top-0 px-4 py-3 z-10 bg-base-100/70 border-b border-base-300 backdrop-blur-xl">
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-2xl font-bold">Gestionnaire de Modules</h1>
+        <div className="flex gap-2">
+          {rightChildren && rightChildren}
+          <AccountAvatar />
+        </div>
+      </div>
+
+      {!search && !setSearch && (
+        <div className="flex items-center justify-between mb-2">
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute z-10 inset-y-0 top-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 " />
+            </div>
+            <input
+              type="text"
+              placeholder="Rechercher des plugins..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input input-bordered w-full pl-10 pr-4 input-sm focus:outline-none focus:border-primary"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute z-10 inset-y-0 top-0 right-0 pr-3 flex items-center"
+              >
+                <X className="h-4 w-4 " />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

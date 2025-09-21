@@ -1,8 +1,8 @@
 import { app, ipcMain, dialog } from 'electron'
-import { readdir, readFile, access } from 'fs/promises'
+import { readdir, readFile, access, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { PluginManifest, LoadedPlugin } from '../types/plugin'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
 
 export class PluginManager {
   private plugins: Map<string, LoadedPlugin> = new Map()
@@ -25,6 +25,10 @@ export class PluginManager {
 
     ipcMain.handle('plugin:reload', async () => {
       return this.scanPlugins()
+    })
+
+    ipcMain.handle('plugin:import', async (_, fileBuffer: ArrayBuffer, fileName: string) => {
+      return this.importPlugin(fileBuffer, fileName)
     })
 
     // Plugin API methods
@@ -138,6 +142,70 @@ export class PluginManager {
       plugin.isLoaded = false
       this.plugins.set(pluginId, plugin)
       return null
+    }
+  }
+
+  async importPlugin(fileBuffer: ArrayBuffer, fileName: string): Promise<{ success: boolean; message: string; pluginId?: string }> {
+    try {
+      // Ensure plugins directory exists
+      await access(this.pluginsPath).catch(async () => {
+        await mkdir(this.pluginsPath, { recursive: true })
+      })
+
+      // For now, we'll handle simple plugin files (JS/TS)
+      // In a real implementation, you'd want to handle ZIP files with extraction
+      if (fileName.endsWith('.zip')) {
+        return {
+          success: false,
+          message: 'ZIP file extraction not yet implemented. Please extract manually to plugins folder.'
+        }
+      }
+
+      // Handle single JS/TS files
+      if (fileName.endsWith('.js') || fileName.endsWith('.ts')) {
+        const pluginName = fileName.replace(/\.(js|ts)$/, '')
+        const pluginDir = join(this.pluginsPath, pluginName)
+        
+        // Create plugin directory
+        await mkdir(pluginDir, { recursive: true })
+        
+        // Save the file
+        const buffer = Buffer.from(fileBuffer)
+        const filePath = join(pluginDir, fileName)
+        await writeFile(filePath, buffer)
+        
+        // Create a basic plugin.json manifest
+        const manifest: PluginManifest = {
+          name: pluginName,
+          version: '1.0.0',
+          description: `Imported plugin: ${pluginName}`,
+          entry: fileName,
+          author: 'Unknown'
+        }
+        
+        const manifestPath = join(pluginDir, 'plugin.json')
+        await writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+        
+        // Rescan plugins to include the new one
+        await this.scanPlugins()
+        
+        return {
+          success: true,
+          message: `Plugin "${pluginName}" imported successfully`,
+          pluginId: pluginName
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Unsupported file format. Please use .js, .ts, or .zip files.'
+      }
+    } catch (error) {
+      console.error('Failed to import plugin:', error)
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
     }
   }
 

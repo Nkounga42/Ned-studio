@@ -91,38 +91,7 @@ const TabManager: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <PluginManager handlePluginSelect={handlePluginSelect} />
-
-      <div className="flex bg-base-200 text-base-content border-b border-base-300 p-2 gap-2">
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            className={`px-3 h-[28px] rounded cursor-pointer ${
-              tab.id === activeId ? "bg-gray-700" : "bg-gray-800"
-            }`}
-            onClick={() => {
-              setActiveId(tab.id)
-              setActiveItem(tab.id)
-            }}
-          >
-            {tab.type === "plugins-home" ? "Plugins" : tab.plugin?.manifest.name}
-            {tab.type === "plugin" && (
-              <button
-                className="ml-2 text-red-400"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  window.dispatchEvent(new CustomEvent("plugin-closed", { detail: tab.id }))
-                }}
-              >
-                ×
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Contenu des onglets */}
+    <div className="flex flex-col h-screen"> 
       <div className="flex-1 overflow-auto">
         {tabs.map((tab) =>
           tab.type === "plugins-home" ? (

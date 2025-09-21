@@ -10,7 +10,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* styles.css */
+}
 
+/* Hero Section Grid Pattern */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
   /* ——— Barre de titre ——— */
@@ -26,11 +33,11 @@ body {
   }
 
   
-/*    
+  
 @plugin "daisyui/theme" {
   name: "light";
   default: false;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(98% 0 0);
@@ -61,11 +68,11 @@ body {
   --depth: 1;
   --noise: 0;
 }
-@plugin "daisyui/theme" {
+/* @plugin "daisyui/theme" {
   name: "cupcake";
   default: false;
-  prefersdark: false;
-  color-scheme: "light";
+  prefersdark: false; */
+  /* color-scheme: "light";
   --color-base-100: oklch(98% 0.003 247.858);
   --color-base-200: oklch(96% 0.007 247.896);
   --color-base-300: oklch(92% 0.013 255.508);
@@ -162,4 +169,4 @@ body {
   --border: 2px;
   --depth: 1;
   --noise: 0;
-} */
+}   */

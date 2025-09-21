@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import PluginManager from './PluginManager'
-import PluginRenderer from './PluginRenderer' 
+import PluginManager from './PluginManager' 
 import { LoadedPlugin } from '@/types/plugin'
+import { LoadedPlugin } from 'src/types/plugin'
 
 const PluginWorkspace: React.FC = () => {
   const [openPlugins, setOpenPlugins] = useState<Record<string, LoadedPlugin>>({})
@@ -39,18 +39,14 @@ const PluginWorkspace: React.FC = () => {
     }
   }, [activeTab])
 
-  const openPluginList = useMemo(() => Object.values(openPlugins), [openPlugins])
-
+ 
   return (
     <div className="w-full h-full relative">
       <div style={{ display: activeTab === 'plugins' ? 'block' : 'none' }}>
-        <PluginManager />
-      </div>
-      {openPluginList.map((p) => (
-        <div key={p.id} style={{ display: activeTab === p.id ? 'block' : 'none' }}>
-          <PluginRenderer plugin={p} />
-        </div>
-      ))}
+        <PluginManager handlePluginSelect={function (plugin: LoadedPlugin): void {
+          throw new Error('Function not implemented.')
+        } } />
+      </div> 
     </div>
   )
 }
