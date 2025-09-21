@@ -136,15 +136,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", onPluginClose }) => {
             <li key={item.id}>
               <div className="relative group">
                 <a
-                  // href={item.href}
                   onClick={() => {
-                    if (item.closable) {
-                      // plugin closable → ouvre l'onglet
-                      window.dispatchEvent(new CustomEvent("plugin-opened", { detail: item }))
-                    } else {
-                      // item normal → active juste le menu
-                      setActiveItem(item.id)
-                    }
+                    // Activer l'item dans le menu (cela va déclencher l'affichage du bon composant)
+                    setActiveItem(item.id)
                   }}
                   className={`flex items-center space-x-3 mx-1 px-3 py-1.5 rounded-box transition-colors group relative cursor-pointer ${
                     item.isActive ? "text-primary " : "hover:bg-base-300/50"
@@ -167,7 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "", onPluginClose }) => {
                   <motion.span
                     className={`whitespace-nowrap flex-1 ${
                       item.isActive
-                        ? "text-primaryfont-medium"
+                        ? "text-primary font-medium"
                         : "text-base-content font-light group-hover:text-primary"
                     }`}
                     variants={contentVariants}

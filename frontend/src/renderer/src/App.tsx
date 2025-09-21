@@ -1,19 +1,39 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Sidebar from "./components/Base/sidebar"
 import TabManager from "./components/TabManager"
 import { useMenu } from "./contexts/MenuContext"
-import PluginRenderer from "./pages/PluginRenderer"
 import NotificationsPage from "./pages/NotificationsPage"
 import TestPage from "./pages/TestPage"
 import HomePage from "./pages/HomePage"
+import DocumentsPage from "./pages/DocumentsPage"
 
 const App: React.FC = () => {
-  const { menuItems, addMenuItem, removeMenuItem, updateMenuItem, setActiveItem } = useMenu()
+  const { setActiveItem } = useMenu()
+  const { menuItems } = useMenu()
   const activeItem = menuItems.find((item) => item.isActive)
 
   const handlePluginClose = (pluginId: string) => {
     window.dispatchEvent(new CustomEvent("plugin-closed", { detail: pluginId }))
   }
+
+  // Écouter l'événement plugin-opened depuis la sidebar
+  useEffect(() => {
+    const handlePluginOpened = (event: CustomEvent) => {
+      const pluginItem = event.detail
+      console.log("Plugin opened:", pluginItem)
+      
+      // Activer d'abord la section modules pour que TabManager soit visible
+      setActiveItem("modules")
+      
+      // Le TabManager se chargera d'activer le bon plugin
+    }
+
+    window.addEventListener("plugin-opened", handlePluginOpened as EventListener)
+    
+    return () => {
+      window.removeEventListener("plugin-opened", handlePluginOpened as EventListener)
+    }
+  }, [setActiveItem])
 
  
 
@@ -31,23 +51,7 @@ const App: React.FC = () => {
           {activeItem?.id === "profile" && <ProfilePage />}
           {activeItem?.id === "settings" && <SettingsPage />}
           {activeItem?.id === "test" && <TestPage />}
-          {activeItem?.id === "modules" && (
-            <TabManager
-              addMenuItem={addMenuItem}
-              removeMenuItem={removeMenuItem}
-              updateMenuItem={updateMenuItem}
-              setActiveItem={setActiveItem}
-              activeItemId={activeItem?.id}
-            />
-          )}
-          {menuItems.map((item) => (
-            <div
-              key={item.id}
-              style={{ display: item.closable && activeItem?.id === item.id ? "block" : "none" }}
-            >
-              <PluginRenderer plugin={item} />
-            </div>
-          ))}
+          {(activeItem?.id === "modules" || activeItem?.closable) && <TabManager />}
 
 
         </div>
@@ -58,12 +62,12 @@ const App: React.FC = () => {
 
 // Composants de pages exemple
 
-const DocumentsPage = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Documents</h1>
-    <p>Gérez vos documents ici.</p>
-  </div>
-)
+// const DocumentsPage = () => (
+//   <div className="p-6">
+//     <h1 className="text-2xl font-bold mb-4">Documents</h1>
+//     <p>Gérez vos documents ici.</p>
+//   </div>
+// )
 
 const ProjectsPage = () => (
   <div className="p-6">

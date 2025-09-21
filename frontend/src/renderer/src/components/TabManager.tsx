@@ -14,7 +14,7 @@ interface Tab {
 const TabManager: React.FC = () => {
   const [tabs, setTabs] = useState<Tab[]>([{ id: "plugins", type: "plugins-home" }])
   const [activeId, setActiveId] = useState("plugins")
-  const { addMenuItem, removeMenuItem, setActiveItem } = useMenu()
+  const { addMenuItem, removeMenuItem, setActiveItem, menuItems } = useMenu()
 
   useEffect(() => {
     const handlePluginOpen = (e: Event) => {
@@ -36,14 +36,14 @@ const TabManager: React.FC = () => {
         label: plugin.manifest.name,
         icon: PluginIcon,
         closable: true,
-        href: undefined, // `/plugins/${plugin.id}`,
-        pluginComponent: plugin.module
+        href: undefined
       })
 
-      // Activer l’onglet et le menu
+      // Activer l'onglet dans TabManager
       setActiveId(plugin.id)
-      setActiveItem(plugin.id)
+      console.log(`Plugin ${plugin.id} opened, setting active tab to:`, plugin.id)
     }
+
 
     const handlePluginClose = (e: Event) => {
       const id = (e as CustomEvent<string>).detail
@@ -52,9 +52,11 @@ const TabManager: React.FC = () => {
       setTabs((prev) => prev.filter((t) => t.id !== id))
       removeMenuItem(id)
 
-      // Réactiver l’onglet par défaut si nécessaire
+      // Réactiver l'onglet par défaut si nécessaire
       setActiveId((prev) => (prev === id ? "plugins" : prev))
-      setActiveItem((prev) => (prev === id ? "plugins" : prev))
+      if (id === "plugins") {
+        setActiveItem("modules")
+      }
     }
 
     window.addEventListener("plugin-opened", handlePluginOpen)
@@ -66,7 +68,30 @@ const TabManager: React.FC = () => {
     }
   }, [addMenuItem, removeMenuItem, setActiveItem])
 
-  
+  // Écouter les changements d'items actifs pour activer les plugins depuis la sidebar
+  useEffect(() => {
+    const activeItem = menuItems.find(item => item.isActive)
+    if (activeItem) {
+      if (activeItem.closable) {
+        // Si l'item actif est un plugin, vérifier qu'il existe dans les tabs
+        const existingTab = tabs.find(tab => tab.id === activeItem.id)
+        if (existingTab) {
+          // L'onglet existe, l'activer simplement
+          setActiveId(activeItem.id)
+        } else {
+          // L'onglet n'existe pas, rediriger vers la page d'accueil des plugins
+          // L'utilisateur devra ouvrir le plugin depuis PluginManager
+          console.log(`Plugin tab ${activeItem.id} not found, redirecting to plugins home`)
+          setActiveItem("modules")
+          setActiveId("plugins")
+        }
+      } else if (activeItem.id === "modules") {
+        // Si on revient sur "modules", afficher la page d'accueil des plugins
+        setActiveId("plugins")
+      }
+    }
+  }, [menuItems, tabs, setActiveItem])
+
   useEffect(() => {
     const handlePluginClose = (e: Event) => {
       const id = (e as CustomEvent<string>).detail
@@ -89,6 +114,9 @@ const TabManager: React.FC = () => {
   const handlePluginSelect = (plugin: LoadedPlugin) => {
     window.dispatchEvent(new CustomEvent("plugin-opened", { detail: plugin }))
   }
+
+  // Debug: afficher l'état actuel
+  console.log("TabManager render - activeId:", activeId, "tabs:", tabs.map(t => t.id))
 
   return (
     <div className="flex flex-col h-screen"> 
