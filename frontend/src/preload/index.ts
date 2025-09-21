@@ -9,6 +9,7 @@ const api = {
     load: (pluginId: string) => ipcRenderer.invoke('plugin:load', pluginId),
     reload: () => ipcRenderer.invoke('plugin:reload'),
     import: (fileBuffer: ArrayBuffer, fileName: string) => ipcRenderer.invoke('plugin:import', fileBuffer, fileName),
+    getIcon: (pluginId: string, iconPath: string) => ipcRenderer.invoke('plugin:getIcon', pluginId, iconPath),
   },
 
   // Plugin API

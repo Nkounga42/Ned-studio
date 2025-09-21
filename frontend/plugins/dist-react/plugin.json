@@ -1,10 +1,10 @@
 {
-  "name": "image as icon",
+  "name": "dist-react",
   "version": "1.0.0",
   "description": "A simple example plugin that demonstrates basic functionality",
-  "author": "NED Studio",
-  "entry": "bundle.js",
-  "icon": "/assets/icon.png",
+  "author": "coreo",
+  "entry": "index.html",
+  "icon": "vite.svg",
   "permissions": ["notification"],
   "dependencies": {
     "react": "^19.1.0"

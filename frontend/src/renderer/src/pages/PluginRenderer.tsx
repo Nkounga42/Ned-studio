@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { LoadedPlugin } from '../../../types/plugin'
+import { AlertTriangle } from 'lucide-react'
 // import './PluginRenderer.css'
 
 interface PluginRendererProps {
@@ -29,9 +30,15 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
       const bundleCode = await window.api.plugins.load(plugin.id)
       console.log('Bundle code received:', bundleCode ? 'Yes' : 'No')
       console.log('Bundle code length:', bundleCode?.length || 0)
-      
+
       if (!bundleCode) {
-        throw new Error(`Failed to load plugin bundle for ${plugin.id}. Bundle code is empty.`)
+        return (
+          <div className="p-4 bg-red-100 text-red-800 rounded-lg border border-red-300">
+            <h2 className="font-bold">Erreur de chargement</h2>
+            <p>Impossible de charger le plugin <b>{plugin.id}</b>.</p>
+            <p className="text-sm">Le bundle est vide ou introuvable.</p>
+          </div>
+        )
       }
 
       // Create a safe execution environment for the plugin
@@ -58,17 +65,17 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
       const originalRequire = (window as any).require
       const originalPluginAPI = (window as any).pluginAPI
 
-      // Set up the plugin environment
-      ;(window as any).global = window
-      ;(window as any).module = { exports: {} }
-      ;(window as any).exports = (window as any).module.exports
-      ;(window as any).require = moduleRequire
-      ;(window as any).pluginAPI = pluginAPI
+        // Set up the plugin environment
+        ; (window as any).global = window
+        ; (window as any).module = { exports: {} }
+        ; (window as any).exports = (window as any).module.exports
+        ; (window as any).require = moduleRequire
+        ; (window as any).pluginAPI = pluginAPI
 
       try {
         // Execute the plugin bundle
         eval(bundleCode)
-        
+
         // Get the component from the module exports or global
         let PluginComponent = (window as any).module.exports
         if (!PluginComponent && (window as any).HelloWorldPlugin) {
@@ -86,27 +93,27 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
       } finally {
         // Restore original globals
         if (originalGlobal !== undefined) {
-          ;(window as any).global = originalGlobal
+          ; (window as any).global = originalGlobal
         } else {
           delete (window as any).global
         }
         if (originalModule !== undefined) {
-          ;(window as any).module = originalModule
+          ; (window as any).module = originalModule
         } else {
           delete (window as any).module
         }
         if (originalExports !== undefined) {
-          ;(window as any).exports = originalExports
+          ; (window as any).exports = originalExports
         } else {
           delete (window as any).exports
         }
         if (originalRequire !== undefined) {
-          ;(window as any).require = originalRequire
+          ; (window as any).require = originalRequire
         } else {
           delete (window as any).require
         }
         if (originalPluginAPI !== undefined) {
-          ;(window as any).pluginAPI = originalPluginAPI
+          ; (window as any).pluginAPI = originalPluginAPI
         } else {
           delete (window as any).pluginAPI
         }
@@ -129,16 +136,20 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
 
   if (error) {
     return (
-      <div className="plugin-renderer error">
-        <div className=" ">
-          <h3>Failed to load plugin</h3>
-          <p>{error}</p>
-          <button onClick={loadPluginComponent}>Retry</button>
+      <div className=" h-screen flex items-center justify-center gap-3 p-4 bg-red-100 text-red-800 ">
+        <div className="flex items-start gap-3 p-4 bg-red-100 text-red-800 rounded-lg border border-red-300">
+          <AlertTriangle className="w-6 h-6 mt-1 text-red-600" />
+          <div>
+            <h2 className="font-bold">Erreur de chargement</h2>
+            <p>
+              Impossible de charger le plugin <b>{plugin.id}</b>.
+            </p>
+            <p className="text-sm">Le bundle est vide ou introuvable.</p>
+          </div>
         </div>
       </div>
     )
   }
-
   if (!component) {
     return (
       <div className="plugin-renderer error">

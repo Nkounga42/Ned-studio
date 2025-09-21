@@ -177,7 +177,7 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
       await loadPlugins()
       setShowImportModal(false)
 
-    } catch (err) {
+    } catch  {
       notify.error({
         title: 'Erreur de téléchargement',
         message: 'Impossible de télécharger le module depuis cette URL'

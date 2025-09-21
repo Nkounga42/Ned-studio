@@ -33,7 +33,29 @@ const App: React.FC = () => {
       
       // Ajouter l'item au menu
       const PluginIcon = plugin.manifest.icon
-        ? () => <img src={plugin.manifest.icon} alt={plugin.manifest.name} className="w-4 h-4" />
+        ? () => {
+            // Construire le chemin complet de l'icône avec le protocole personnalisé
+            const icon = plugin.manifest.icon!
+            let iconPath: string
+            
+            if (icon.startsWith('./')) {
+              // Chemin relatif avec ./
+              iconPath = `plugin://${plugin.id}/${icon.substring(2)}`
+            } else if (!icon.startsWith('http') && !icon.startsWith('/') && !icon.includes('://')) {
+              // Chemin relatif sans ./
+              iconPath = `plugin://${plugin.id}/${icon}`
+            } else {
+              // Chemin absolu ou URL
+              iconPath = icon
+            }
+            
+            console.log(`Loading plugin icon: ${iconPath}`)
+            return <img src={iconPath} alt={plugin.manifest.name} className="w-4 h-4" onError={(e) => {
+              console.error(`Failed to load plugin icon: ${iconPath}`)
+              // Fallback vers l'icône par défaut en cas d'erreur
+              e.currentTarget.style.display = 'none'
+            }} />
+          }
         : User
       addMenuItem({
         id: plugin.id,

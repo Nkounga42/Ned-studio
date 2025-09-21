@@ -1,19 +1,42 @@
-import React from "react"
-import { LoadedPlugin } from "../../../types/plugin"
+import React, { useState, useEffect } from "react"
+import { PluginCardProps } from "../../../types/plugin"
 import { CheckCircle2, AlertTriangle, Zap, User } from "lucide-react"
 import packageImg from "../assets/img/package.png"
 
-interface PluginCardProps {
-  plugin: LoadedPlugin
-  onSelect: (plugin: LoadedPlugin) => void
-}
-
 const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
-  const handleClick = () => {
+  const [iconSrc, setIconSrc] = useState<string>(packageImg)
+
+  const handleClick = (): void => {
     if (!plugin.error) {
       onSelect(plugin)
     }
   }
+
+  // Charger l'icône du plugin via l'API IPC
+  useEffect(() => {
+    const loadPluginIcon = async () => {
+      if (!plugin.manifest.icon) {
+        setIconSrc(packageImg)
+        return
+      }
+
+      try {
+        const iconData = await window.api.plugins.getIcon(plugin.id, plugin.manifest.icon)
+        if (iconData) {
+          setIconSrc(iconData)
+          console.log(`Plugin ${plugin.manifest.name} icon loaded successfully`)
+        } else {
+          console.log(`Plugin ${plugin.manifest.name} icon not found, using default`)
+          setIconSrc(packageImg)
+        }
+      } catch (error) {
+        console.error(`Error loading plugin ${plugin.manifest.name} icon:`, error)
+        setIconSrc(packageImg)
+      }
+    }
+
+    loadPluginIcon()
+  }, [plugin.id, plugin.manifest.icon, plugin.manifest.name])
 
   return (
     <div
@@ -25,7 +48,7 @@ const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-base-300">
           <img
-            src={plugin.manifest.icon || packageImg}
+            src={iconSrc}
             alt={plugin.manifest.name}
             className="w-12 h-12 rounded-md object-contain"
             onError={(e) => { 
@@ -65,16 +88,12 @@ const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
           </span>
         )}
 
-        {!plugin.error && (
-          <button className="btn btn-soft  btn-xs">Ouvrir</button>
-        )}
+        {!plugin.error && <button className="btn btn-soft  btn-xs">Ouvrir</button>}
       </div>
 
       {/* Message d'erreur */}
       {plugin.error && (
-        <div className="p-2 text-xs text-red-600 bg-red-100 rounded-md">
-          {plugin.error}
-        </div>
+        <div className="p-2 text-xs text-red-600 bg-red-100 rounded-md">{plugin.error}</div>
       )}
     </div>
   )

@@ -1,9 +1,37 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, protocol } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils' 
 import logoIcon from '../../src/renderer/src/assets/img/logo.png?asset'
 import { PluginManager } from './plugin-manager'
+import { existsSync, readFileSync } from 'fs'
 // import { title } from 'process'
+
+// Fonction pour enregistrer le protocole personnalisé pour les plugins
+function registerPluginProtocol(): void {
+  protocol.registerFileProtocol('plugin', (request, callback) => {
+    try {
+      // Extraire le chemin du plugin depuis l'URL
+      // Format: plugin://plugin-path/file-path
+      const url = request.url.substring('plugin://'.length)
+      // Le dossier plugins est à la racine du frontend
+      const pluginsDir = join(__dirname, '../../../plugins')
+      const fullPath = join(pluginsDir, url)
+      
+      console.log(`Plugin protocol request: ${request.url} -> ${fullPath}`)
+      
+      // Vérifier que le fichier existe et est dans le dossier plugins
+      if (existsSync(fullPath) && fullPath.startsWith(pluginsDir)) {
+        callback({ path: fullPath })
+      } else {
+        console.error(`Plugin file not found or outside plugins directory: ${fullPath}`)
+        callback({ error: -6 }) // FILE_NOT_FOUND
+      }
+    } catch (error) {
+      console.error('Plugin protocol error:', error)
+      callback({ error: -2 }) // GENERIC_FAILURE
+    }
+  })
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -60,15 +88,42 @@ function createWindow(): void {
   ipcMain.handle('window:close', () => mainWindow?.close());
   ipcMain.handle('window:isMaximized', () => mainWindow?.isMaximized());
 
+  /* IPC : icônes des plugins */
+  ipcMain.handle('plugin:getIcon', async (_, pluginId: string, iconPath: string) => {
+    try {
+      const pluginsDir = join(__dirname, '../../../plugins');
+      const fullIconPath = join(pluginsDir, pluginId, iconPath);
+      
+      console.log(`Reading plugin icon: ${fullIconPath}`);
+      
+      if (existsSync(fullIconPath) && fullIconPath.startsWith(pluginsDir)) {
+        const iconData = readFileSync(fullIconPath);
+        const base64Data = iconData.toString('base64');
+        const mimeType = iconPath.endsWith('.png') ? 'image/png' : 
+                        iconPath.endsWith('.jpg') || iconPath.endsWith('.jpeg') ? 'image/jpeg' :
+                        iconPath.endsWith('.svg') ? 'image/svg+xml' : 'image/png';
+        
+        return `data:${mimeType};base64,${base64Data}`;
+      } else {
+        console.error(`Plugin icon not found: ${fullIconPath}`);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error reading plugin icon:', error);
+      return null;
+    }
+  });
+
    
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Register protocol before app is ready
 app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+
+  // Register custom protocol for plugins
+  registerPluginProtocol()
 
   // Initialize plugin manager
   const pluginManager = new PluginManager()

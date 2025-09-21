@@ -1,12 +1,7 @@
-export interface PluginManifest {
-  name: string;
-  version: string;
-  description?: string;
-  author?: string;
-  icon?: string;
-  entry: string;
+export interface PluginCardProps {
+  plugin: LoadedPlugin
+  onSelect: (plugin: LoadedPlugin) => void
 }
-
 export interface LoadedPlugin {
   id: string;
   manifest: PluginManifest;
@@ -15,4 +10,12 @@ export interface LoadedPlugin {
   error?: string;
 }
 
+export interface PluginManifest {
+  name: string;
+  version: string;
+  description?: string;
+  author?: string;
+  icon?: string;
+  entry: string;
+}
 
