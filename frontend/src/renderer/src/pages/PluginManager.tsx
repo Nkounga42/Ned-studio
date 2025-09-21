@@ -211,13 +211,13 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
         search={search}
         setSearch={setSearch}
         rightChildren={
-          <div className="dropdown dropdown-bottom">
+          <div className="dropdown dropdown-bottom dropdown-end">
           <label tabIndex={0} className="btn btn-sm m-1">
             Importer
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content -translate-x-1/2 menu p-2 shadow bg-base-100 rounded-box w-52"
+            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10"
           >
             {/* Importer fichier */}
             <li>
@@ -284,23 +284,25 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
         {importing && (
           <div className="alert alert-info">
             <span className="loading loading-spinner loading-sm"></span>
-            <span>Importation en cours...</span>
+            <span className="text-sm sm:text-base">Importation en cours...</span>
           </div>
         )}
 
         {/* Message d'information sur le redémarrage */}
         {!window.api?.plugins?.import && (
-          <div className=" ">
-            <div className="flex items-center justify-between w-full">
-              <div>
-                <strong>⚠️ API d'importation non disponible</strong>
-                <p className="text-sm mt-1">
+          <div className="alert alert-warning">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full gap-3">
+              <div className="flex-1">
+                <strong className="text-sm sm:text-base">
+                  ⚠️ API d'importation non disponible
+                </strong>
+                <p className="text-xs sm:text-sm mt-1">
                   L'API d'importation de plugins sera disponible après redémarrage de l'application.
                 </p>
               </div>
               <button
                 onClick={() => window.location.reload()}
-                className="btn btn-sm btn-warning"
+                className="btn btn-sm btn-warning w-full sm:w-auto"
               >
                 Redémarrer
               </button>
@@ -319,48 +321,52 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
           filteredPlugins.length === 0 ? (
             <div>
               {search ? (
-                <div className="text-error text-sm">
-                  <span>Aucun plugin trouvé pour "{search}".</span>
+                <div className="text-center py-8">
+                  <div className="text-error text-sm sm:text-base">
+                    <span>Aucun plugin trouvé pour "{search}".</span>
+                  </div>
                 </div>
               ) : (
                 <div className="mb-6">
                   <div className="">
-                    <h2 className=" text-lg flex items-center gap-2">
+                    <h2 className="text-base sm:text-lg lg:text-xl flex items-center gap-2 mb-4">
                       Importation de Modules
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                      <div className="stat bg-base-200 border border-b border-r border-base-300 rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                      <div className="stat bg-base-200 border border-base-300 rounded-lg p-4">
                         <div className="stat-figure text-primary">
-                          <Upload className="h-8 w-8" />
+                          <Upload className="h-6 w-6 sm:h-8 sm:w-8" />
                         </div>
-                        <div className="stat-title">Fichiers</div>
-                        <div className="stat-value text-sm">ZIP, JS, TS</div>
-                        <div className="stat-desc">Glissez-déposez ou cliquez</div>
+                        <div className="stat-title text-xs sm:text-sm">Fichiers</div>
+                        <div className="stat-value text-xs sm:text-sm">ZIP, JS, TS</div>
+                        <div className="stat-desc text-xs">Glissez-déposez ou cliquez</div>
                       </div>
 
-                      <div className="stat bg-base-200 border border-b border-r border-base-300 rounded-lg">
+                      <div className="stat bg-base-200 border border-base-300 rounded-lg p-4">
                         <div className="stat-figure text-secondary">
-                          <FolderOpen className="h-8 w-8" />
+                          <FolderOpen className="h-6 w-6 sm:h-8 sm:w-8" />
                         </div>
-                        <div className="stat-title">Dossiers</div>
-                        <div className="stat-value text-sm">Projets</div>
-                        <div className="stat-desc">Sélection de dossier</div>
+                        <div className="stat-title text-xs sm:text-sm">Dossiers</div>
+                        <div className="stat-value text-xs sm:text-sm">Projets</div>
+                        <div className="stat-desc text-xs">Sélection de dossier</div>
                       </div>
 
-                      <div className="stat bg-base-200 border border-b border-r border-base-300 rounded-lg">
+                      <div className="stat bg-base-200 border border-base-300 rounded-lg p-4 sm:col-span-2 lg:col-span-1">
                         <div className="stat-figure text-accent">
-                          <Download className="h-8 w-8" />
+                          <Download className="h-6 w-6 sm:h-8 sm:w-8" />
                         </div>
-                        <div className="stat-title">URLs</div>
-                        <div className="stat-value text-sm">Git, HTTP</div>
-                        <div className="stat-desc">Téléchargement direct</div>
+                        <div className="stat-title text-xs sm:text-sm">URLs</div>
+                        <div className="stat-value text-xs sm:text-sm">Git, HTTP</div>
+                        <div className="stat-desc text-xs">Téléchargement direct</div>
                       </div>
                     </div>
 
-                    <div className="p-2 alert-warning mt-4">
-                      <div className="text-sm">
+                    <div className="p-3 sm:p-4 alert alert-warning mt-4">
+                      <div className="text-xs sm:text-sm">
                         <strong>📁 Stockage:</strong> Les modules importés sont automatiquement installés dans le dossier
-                        <code className="bg-base-300 px-2 py-1 rounded mx-1">plugins/</code>
+                        <code className="bg-base-300 px-1 sm:px-2 py-1 rounded mx-1 text-xs">
+                          plugins/
+                        </code>
                         et deviennent immédiatement disponibles dans l'application.
                       </div>
                     </div>
@@ -369,7 +375,7 @@ const PluginManager: React.FC<{ handlePluginSelect: (plugin: LoadedPlugin) => vo
               )}
             </div>
           ) : (
-            <div className="grid gap-6 grid-cols-4 grid-rows-4 m-auto">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {filteredPlugins.map((plugin) => (
                 <PluginCard
                   key={plugin.id}

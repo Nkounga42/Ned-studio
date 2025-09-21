@@ -14,7 +14,7 @@ const PLUGIN_SERVER_PORT = 3001
 
 // Fonction pour créer un serveur HTTP pour les plugins React
 function createPluginServer(): void {
-  const pluginsDir = join(__dirname, '../../../plugins')
+  const pluginsDir = join(__dirname, '../../../frontend/plugins')
   
   pluginServer = createServer(async (req, res) => {
     try {
@@ -219,7 +219,7 @@ function createWindow(): void {
   /* IPC : icônes des plugins */
   ipcMain.handle('plugin:getIcon', async (_, pluginId: string, iconPath: string) => {
     try {
-      const pluginsDir = join(__dirname, '../../../plugins');
+      const pluginsDir = join(__dirname, '../../../frontend/plugins');
       const fullIconPath = join(pluginsDir, pluginId, iconPath);
       
       console.log(`Reading plugin icon: ${fullIconPath}`);

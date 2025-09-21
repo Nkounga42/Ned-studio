@@ -9,7 +9,7 @@ export class PluginManager {
   private pluginsPath: string
 
   constructor() {
-    // Use the plugins directory in the project root instead of userData
+    // Use the plugins directory in the frontend folder
     this.pluginsPath = join(__dirname, '../../plugins')
     this.initializeIPC()
   }

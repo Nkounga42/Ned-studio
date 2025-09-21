@@ -183,15 +183,15 @@ const SearchPage: React.FC = () => {
 
   const getTypeIcon = (type: SearchResult['type']) => {
     switch (type) {
-      case 'file': return <FileText className="h-5 w-5 text-blue-500" />
-      case 'project': return <FolderOpen className="h-5 w-5 text-green-500" />
-      case 'user': return <Users className="h-5 w-5 text-purple-500" />
-      case 'code': return <Code className="h-5 w-5 text-orange-500" />
-      case 'image': return <Image className="h-5 w-5 text-pink-500" />
-      case 'video': return <Video className="h-5 w-5 text-red-500" />
-      case 'audio': return <Music className="h-5 w-5 text-indigo-500" />
-      case 'archive': return <Archive className="h-5 w-5 text-gray-500" />
-      default: return <FileText className="h-5 w-5 text-gray-500" />
+      case 'file': return <FileText className="h-4 w-4 text-blue-500" />
+      case 'project': return <FolderOpen className="h-4 w-4 text-green-500" />
+      case 'user': return <Users className="h-4 w-4 text-purple-500" />
+      case 'code': return <Code className="h-4 w-4 text-orange-500" />
+      case 'image': return <Image className="h-4 w-4 text-pink-500" />
+      case 'video': return <Video className="h-4 w-4 text-red-500" />
+      case 'audio': return <Music className="h-4 w-4 text-indigo-500" />
+      case 'archive': return <Archive className="h-4 w-4 text-gray-500" />
+      default: return <FileText className="h-4 w-4 text-gray-500" />
     }
   }
 
@@ -222,7 +222,7 @@ const SearchPage: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center mt-30">
         <h1 className="text-3xl font-bold mb-2">Recherche</h1>
         <p className="text-base-content/70">
           Trouvez rapidement vos fichiers, projets et contenus
@@ -234,19 +234,19 @@ const SearchPage: React.FC = () => {
         <div className="relative">
           <div className="flex">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-base-content/50" />
+              <Search className="absolute z-10 left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-base-content/50" />
               <input
                 type="text"
                 placeholder="Rechercher des fichiers, projets, code..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && performSearch()}
-                className="input input-bordered input-lg w-full pl-12 pr-4"
+                className="input input-bordered input-sm bg-base-200/30 w-full pl-8 pr-4 focus:border-primary outline-none focus:outline-none"
               />
               
               {/* Suggestions */}
               {suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg mt-1 shadow-lg z-10">
+                <div className="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-sm mt-1 shadow-sm z-10">
                   {suggestions.map((suggestion, index) => (
                     <button
                       key={index}
@@ -254,7 +254,7 @@ const SearchPage: React.FC = () => {
                         setSearchTerm(suggestion)
                         performSearch(suggestion)
                       }}
-                      className="w-full text-left px-4 py-2 hover:bg-base-200 first:rounded-t-lg last:rounded-b-lg"
+                      className="w-full text-left px-4 py-2 hover:bg-base-200 first:rounded-t-sm last:rounded-b-sm"
                     >
                       <div className="flex items-center gap-2">
                         <Search className="h-4 w-4 text-base-content/50" />
@@ -269,20 +269,20 @@ const SearchPage: React.FC = () => {
             <button
               onClick={() => performSearch()}
               disabled={loading}
-              className="btn btn-primary btn-lg ml-2"
+              className="btn btn-primary btn-sm ml-2"
             >
               {loading ? (
                 <span className="loading loading-spinner loading-sm"></span>
               ) : (
-                <Search className="h-5 w-5" />
+                <Search className="h-4 w-4" />
               )}
             </button>
             
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`btn btn-outline btn-lg ml-2 ${showFilters ? 'btn-active' : ''}`}
+              className={`btn btn btn-sm ml-2 ${showFilters ? 'btn-active' : ''}`}
             >
-              <Filter className="h-5 w-5" />
+              <Filter className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -292,7 +292,7 @@ const SearchPage: React.FC = () => {
           {['Fichiers', 'Projets', 'Code', 'Images'].map((filter) => (
             <button
               key={filter}
-              className="btn btn-sm btn-outline"
+              className="btn btn-sm btn"
               onClick={() => performSearch(filter.toLowerCase())}
             >
               {filter}
@@ -301,86 +301,13 @@ const SearchPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Advanced Filters */}
-      {showFilters && (
-        <div className="max-w-4xl mx-auto card bg-base-200 shadow-sm">
-          <div className="card-body">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="card-title">Filtres avancés</h3>
-              <button
-                onClick={clearFilters}
-                className="btn btn-ghost btn-sm"
-              >
-                <X className="h-4 w-4" />
-                Effacer
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className="label">
-                  <span className="label-text">Type de fichier</span>
-                </label>
-                <select className="select select-bordered w-full">
-                  <option>Tous les types</option>
-                  <option>Documents</option>
-                  <option>Images</option>
-                  <option>Code</option>
-                  <option>Archives</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="label">
-                  <span className="label-text">Période</span>
-                </label>
-                <select 
-                  className="select select-bordered w-full"
-                  value={filters.dateRange}
-                  onChange={(e) => setFilters({...filters, dateRange: e.target.value as any})}
-                >
-                  <option value="all">Toute période</option>
-                  <option value="today">Aujourd'hui</option>
-                  <option value="week">Cette semaine</option>
-                  <option value="month">Ce mois</option>
-                  <option value="year">Cette année</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="label">
-                  <span className="label-text">Auteur</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Nom de l'auteur"
-                  value={filters.author}
-                  onChange={(e) => setFilters({...filters, author: e.target.value})}
-                  className="input input-bordered w-full"
-                />
-              </div>
-              
-              <div>
-                <label className="label">
-                  <span className="label-text">Taille</span>
-                </label>
-                <select className="select select-bordered w-full">
-                  <option>Toutes tailles</option>
-                  <option>Petits (&lt; 1MB)</option>
-                  <option>Moyens (1-10MB)</option>
-                  <option>Grands (&gt; 10MB)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+       
 
       {/* Search History */}
       {searchHistory.length > 0 && !searchTerm && results.length === 0 && (
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-            <History className="h-5 w-5" />
+          <h3 className="text-sm font-medium mb-4 flex items-center gap-2">
+            <History className="h-4 w-4" />
             Recherches récentes
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -391,7 +318,7 @@ const SearchPage: React.FC = () => {
                   setSearchTerm(term)
                   performSearch(term)
                 }}
-                className="btn btn-sm btn-outline gap-2"
+                className="btn btn-sm btn gap-2"
               >
                 <Clock className="h-3 w-3" />
                 {term}
@@ -405,24 +332,12 @@ const SearchPage: React.FC = () => {
       {results.length > 0 && (
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Results Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between ">
             <div className="flex items-center gap-4">
-              <h3 className="text-lg font-medium">
+              <h3 className="text-sm font-medium">
                 {results.length} résultat{results.length > 1 ? 's' : ''} trouvé{results.length > 1 ? 's' : ''}
-              </h3>
-              <div className="flex items-center gap-2 text-sm text-base-content/60">
-                <TrendingUp className="h-4 w-4" />
-                <span>Triés par pertinence</span>
-              </div>
-            </div>
-            
-            <select className="select select-bordered select-sm">
-              <option>Pertinence</option>
-              <option>Date (récent)</option>
-              <option>Date (ancien)</option>
-              <option>Nom (A-Z)</option>
-              <option>Taille</option>
-            </select>
+              </h3> 
+            </div> 
           </div>
 
           {/* Results List */}
@@ -430,7 +345,7 @@ const SearchPage: React.FC = () => {
             {results.map((result) => (
               <div
                 key={result.id}
-                className="card bg-base-100 shadow-sm hover:shadow-md transition-all cursor-pointer border border-base-300"
+                className="card bg-base-100 shadow-xs hover:shadow-md transition-all cursor-pointer border border-base-300"
               >
                 <div className="card-body p-6">
                   <div className="flex items-start gap-4">
@@ -440,7 +355,7 @@ const SearchPage: React.FC = () => {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-lg text-primary hover:underline">
+                        <h4 className="font-medium text-sm text-primary hover:underline">
                           {result.title}
                         </h4>
                         <div className="text-sm text-base-content/60">
@@ -482,7 +397,7 @@ const SearchPage: React.FC = () => {
                         {result.tags.map((tag, index) => (
                           <span
                             key={index}
-                            className="badge badge-outline badge-sm"
+                            className="badge badge badge-sm"
                           >
                             <Tag className="h-2 w-2 mr-1" />
                             {tag}
@@ -502,13 +417,13 @@ const SearchPage: React.FC = () => {
       {!loading && searchTerm && results.length === 0 && (
         <div className="text-center py-12">
           <Search className="h-16 w-16 text-base-content/30 mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">Aucun résultat trouvé</h3>
+          <h3 className="text-sm font-medium mb-2">Aucun résultat trouvé</h3>
           <p className="text-base-content/70 mb-4">
             Essayez avec d'autres mots-clés ou ajustez vos filtres
           </p>
           <button
             onClick={() => setShowFilters(true)}
-            className="btn btn-outline gap-2"
+            className="btn btn gap-2"
           >
             <Filter className="h-4 w-4" />
             Modifier les filtres

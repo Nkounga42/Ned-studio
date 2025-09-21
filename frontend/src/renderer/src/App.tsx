@@ -10,6 +10,8 @@ import DocumentsPage from "./pages/DocumentsPage"
 import { LoadedPlugin } from "../../types/plugin"
 import {  User } from "lucide-react"
 import { Link } from "react-router-dom"
+import SearchPage from "./pages/SearchPage"
+import Settings from "./pages/Settings"
 
 // Composant pour l'icône du plugin dans la sidebar
 const PluginIconComponent: React.FC<{ plugin: LoadedPlugin }> = ({ plugin }) => {
@@ -17,7 +19,7 @@ const PluginIconComponent: React.FC<{ plugin: LoadedPlugin }> = ({ plugin }) => 
   
   useEffect(() => {
     const loadIcon = async () => {
-      if (!plugin.manifest.icon) return
+      // if (!plugin.manifest.icon) return
       
       try {
         const iconData = await window.api.plugins.getIcon(plugin.id, plugin.manifest.icon)
@@ -34,7 +36,7 @@ const PluginIconComponent: React.FC<{ plugin: LoadedPlugin }> = ({ plugin }) => 
   return iconSrc ? (
     <img src={iconSrc} alt={plugin.manifest.name} className="w-4 h-4" />
   ) : (
-    <User className="w-4 h-4" />
+    <img src={iconSrc} alt={plugin.manifest.name} className="w-4 h-4" />
   )
 }
 
@@ -114,7 +116,7 @@ const App: React.FC = () => {
           {activeItem?.id === "notifications" && <NotificationsPage />}
           {activeItem?.id === "downloads" && <DownloadsPage />}
           {activeItem?.id === "profile" && <ProfilePage />}
-          {activeItem?.id === "settings" && <SettingsPage />}
+          {activeItem?.id === "settings" && <Settings />}
           {activeItem?.id === "test" && <TestPage />}
           {activeItem?.id === "modules" && <PluginManager handlePluginSelect={handlePluginSelect} />}
           {/* Rendu des plugins ouverts */}
@@ -139,14 +141,7 @@ const ProjectsPage = () => (
     </Link>
   </div>
 )
-
-const SearchPage = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Recherche</h1>
-    <p>Utilisez cette page pour rechercher dans l'application.</p>
-  </div>
-)
-
+ 
 
 const DownloadsPage = () => (
   <div className="p-6">
@@ -160,13 +155,6 @@ const ProfilePage = () => (
     <h1 className="text-2xl font-bold mb-4">Profil</h1>
     <p>Configurez votre profil utilisateur.</p>
   </div>
-)
-
-const SettingsPage = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Paramètres</h1>
-    <p>Ajustez les paramètres de l'application.</p>
-  </div>
-)
+) 
 
 export default App
