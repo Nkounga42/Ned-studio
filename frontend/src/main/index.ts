@@ -4,18 +4,117 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import logoIcon from '../../src/renderer/src/assets/img/logo.png?asset'
 import { PluginManager } from './plugin-manager'
 import { existsSync, readFileSync } from 'fs'
+import { createServer } from 'http'
+import { readFile } from 'fs/promises'
+import { extname } from 'path'
 // import { title } from 'process'
+
+let pluginServer: any = null
+const PLUGIN_SERVER_PORT = 3001
+
+// Fonction pour créer un serveur HTTP pour les plugins React
+function createPluginServer(): void {
+  const pluginsDir = join(__dirname, '../../../plugins')
+  
+  pluginServer = createServer(async (req, res) => {
+    try {
+      // Parse URL pour extraire le chemin
+      const url = new URL(req.url!, `http://localhost:${PLUGIN_SERVER_PORT}`)
+      let filePath = url.pathname
+      
+      // Enlever le slash initial
+      if (filePath.startsWith('/')) {
+        filePath = filePath.substring(1)
+      }
+      
+      // Si pas de fichier spécifié, utiliser index.html
+      if (filePath === '' || filePath.endsWith('/')) {
+        filePath += 'index.html'
+      }
+      
+      const fullPath = join(pluginsDir, filePath)
+      console.log(`Plugin server request: ${req.url} -> ${fullPath}`)
+      
+      // Vérifier que le fichier existe et est dans le dossier plugins
+      if (!existsSync(fullPath) || !fullPath.startsWith(pluginsDir)) {
+        // Pour les applications React avec router, essayer de servir index.html
+        const parts = filePath.split('/')
+        if (parts.length >= 2) {
+          const pluginId = parts[0]
+          const indexPath = join(pluginsDir, pluginId, 'index.html')
+          
+          if (existsSync(indexPath) && indexPath.startsWith(pluginsDir)) {
+            console.log(`Fallback to index.html for SPA routing: ${indexPath}`)
+            const indexContent = await readFile(indexPath)
+            res.writeHead(200, {
+              'Content-Type': 'text/html',
+              'Access-Control-Allow-Origin': '*',
+              'Cache-Control': 'no-cache'
+            })
+            res.end(indexContent)
+            return
+          }
+        }
+        
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('File not found')
+        return
+      }
+      
+      // Déterminer le type MIME
+      const ext = extname(fullPath).toLowerCase()
+      const mimeTypes: { [key: string]: string } = {
+        '.html': 'text/html',
+        '.js': 'application/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon'
+      }
+      
+      const contentType = mimeTypes[ext] || 'application/octet-stream'
+      
+      // Lire et servir le fichier
+      const fileContent = await readFile(fullPath)
+      
+      // Headers pour éviter les problèmes CORS et permettre le routing côté client
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Cache-Control': 'no-cache'
+      })
+      
+      res.end(fileContent)
+      
+    } catch (error) {
+      console.error('Plugin server error:', error)
+      res.writeHead(500, { 'Content-Type': 'text/plain' })
+      res.end('Internal server error')
+    }
+  })
+  
+  pluginServer.listen(PLUGIN_SERVER_PORT, 'localhost', () => {
+    console.log(`Plugin server running on http://localhost:${PLUGIN_SERVER_PORT}`)
+  })
+}
 
 // Fonction pour enregistrer le protocole personnalisé pour les plugins
 function registerPluginProtocol(): void {
   protocol.registerFileProtocol('plugin', (request, callback) => {
     try {
       // Extraire le chemin du plugin depuis l'URL
-      // Format: plugin://plugin-path/file-path
+      // Format: plugin://plugin-id/file-path
       const url = request.url.substring('plugin://'.length)
-      // Le dossier plugins est à la racine du frontend
       const pluginsDir = join(__dirname, '../../../plugins')
-      const fullPath = join(pluginsDir, url)
+      
+      // Pour les fichiers HTML buildés, gérer les chemins relatifs
+      let fullPath: string = join(pluginsDir, url)
       
       console.log(`Plugin protocol request: ${request.url} -> ${fullPath}`)
       
@@ -55,6 +154,7 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: true,
+      webSecurity: false, // Désactiver temporairement pour les plugins
     }
   })
 
@@ -66,6 +166,34 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
+  // Désactiver la CSP pour permettre le chargement des plugins
+  // mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+  //   const responseHeaders = details.responseHeaders || {}
+    
+    
+  //   // Supprimer complètement les headers CSP
+  //   delete responseHeaders['content-security-policy']
+  //   delete responseHeaders['content-security-policy-report-only']
+    
+  //   callback({ responseHeaders })
+  // })
+ 
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        "Content-Security-Policy": [
+          "default-src 'self' http://localhost:3000; " +
+          "frame-src 'self' http://localhost:3000 http://localhost:3001; " +
+          "img-src 'self' data: plugin:; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:3000 http://localhost:3001; " +
+          "style-src 'self' 'unsafe-inline' http://localhost:3000 http://localhost:3001;"
+        ]
+      }
+    })
+  })
+  
 
   mainWindow.on('maximize', () => mainWindow.webContents.send('window:isMaximized', true));
   mainWindow.on('unmaximize', () => mainWindow.webContents.send('window:isMaximized', false));
@@ -125,6 +253,9 @@ app.whenReady().then(async () => {
   // Register custom protocol for plugins
   registerPluginProtocol()
 
+  // Start plugin server for React apps
+  createPluginServer()
+
   // Initialize plugin manager
   const pluginManager = new PluginManager()
   await pluginManager.scanPlugins()
@@ -143,6 +274,12 @@ app.whenReady().then(async () => {
   })
 }) 
 app.on('window-all-closed', () => {
+  // Fermer le serveur de plugins
+  if (pluginServer) {
+    pluginServer.close()
+    pluginServer = null
+  }
+  
   if (process.platform !== 'darwin') {
     app.quit()
   }

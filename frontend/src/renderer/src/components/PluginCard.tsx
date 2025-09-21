@@ -14,8 +14,14 @@ const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
 
   // Charger l'icône du plugin via l'API IPC
   useEffect(() => {
-    const loadPluginIcon = async () => {
+    const loadPluginIcon = async (): Promise<void> => {
       if (!plugin.manifest.icon) {
+        setIconSrc(packageImg)
+        return
+      }
+
+      if (!window.api?.plugins?.getIcon) {
+        console.error("window.api.plugins.getIcon is not available")
         setIconSrc(packageImg)
         return
       }
@@ -51,8 +57,8 @@ const PluginCard: React.FC<PluginCardProps> = ({ plugin, onSelect }) => {
             src={iconSrc}
             alt={plugin.manifest.name}
             className="w-12 h-12 rounded-md object-contain"
-            onError={(e) => { 
-              (e.currentTarget as HTMLImageElement).src = packageImg
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = packageImg;
             }}
           />
         </div>

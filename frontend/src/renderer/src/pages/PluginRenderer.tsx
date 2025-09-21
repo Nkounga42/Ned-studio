@@ -26,7 +26,27 @@ const PluginRenderer: React.FC<PluginRendererProps> = ({ plugin }) => {
       console.log('Plugin path:', plugin.path)
       console.log('Plugin manifest:', plugin.manifest)
 
-      // Load the plugin bundle
+      // Check if this is an HTML-based plugin (built React app)
+      if (plugin.manifest.entry.endsWith('.html')) {
+        console.log('Detected HTML-based plugin (built React app)')
+        setComponent(() => () => (
+          <iframe
+            src={`http://localhost:3001/${plugin.id}/${plugin.manifest.entry}`}
+            style={{
+              width: '100%',
+              height: '100vh',
+              border: 'none',
+              background: 'white'
+            }}
+            title={plugin.manifest.name}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
+          />
+        ))
+        setLoading(false)
+        return
+      }
+
+      // Load the plugin bundle for JS-based plugins
       const bundleCode = await window.api.plugins.load(plugin.id)
       console.log('Bundle code received:', bundleCode ? 'Yes' : 'No')
       console.log('Bundle code length:', bundleCode?.length || 0)

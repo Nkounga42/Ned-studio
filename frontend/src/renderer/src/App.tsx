@@ -8,7 +8,35 @@ import TestPage from "./pages/TestPage"
 import HomePage from "./pages/HomePage"
 import DocumentsPage from "./pages/DocumentsPage"
 import { LoadedPlugin } from "../../types/plugin"
-import { User } from "lucide-react"
+import {  User } from "lucide-react"
+import { Link } from "react-router-dom"
+
+// Composant pour l'icône du plugin dans la sidebar
+const PluginIconComponent: React.FC<{ plugin: LoadedPlugin }> = ({ plugin }) => {
+  const [iconSrc, setIconSrc] = useState<string>('')
+  
+  useEffect(() => {
+    const loadIcon = async () => {
+      if (!plugin.manifest.icon) return
+      
+      try {
+        const iconData = await window.api.plugins.getIcon(plugin.id, plugin.manifest.icon)
+        if (iconData) {
+          setIconSrc(iconData)
+        }
+      } catch (error) {
+        console.error(`Failed to load plugin icon for ${plugin.manifest.name}:`, error)
+      }
+    }
+    loadIcon()
+  }, [plugin.id, plugin.manifest.icon, plugin.manifest.name])
+  
+  return iconSrc ? (
+    <img src={iconSrc} alt={plugin.manifest.name} className="w-4 h-4" />
+  ) : (
+    <User className="w-4 h-4" />
+  )
+}
 
 const App: React.FC = () => {
   const { setActiveItem, addMenuItem, removeMenuItem } = useMenu()
@@ -31,31 +59,9 @@ const App: React.FC = () => {
       // Ajouter le plugin à la liste des plugins ouverts
       setOpenPlugins(prev => [...prev, plugin])
       
-      // Ajouter l'item au menu
+      // Ajouter l'item au menu avec l'icône du plugin
       const PluginIcon = plugin.manifest.icon
-        ? () => {
-            // Construire le chemin complet de l'icône avec le protocole personnalisé
-            const icon = plugin.manifest.icon!
-            let iconPath: string
-            
-            if (icon.startsWith('./')) {
-              // Chemin relatif avec ./
-              iconPath = `plugin://${plugin.id}/${icon.substring(2)}`
-            } else if (!icon.startsWith('http') && !icon.startsWith('/') && !icon.includes('://')) {
-              // Chemin relatif sans ./
-              iconPath = `plugin://${plugin.id}/${icon}`
-            } else {
-              // Chemin absolu ou URL
-              iconPath = icon
-            }
-            
-            console.log(`Loading plugin icon: ${iconPath}`)
-            return <img src={iconPath} alt={plugin.manifest.name} className="w-4 h-4" onError={(e) => {
-              console.error(`Failed to load plugin icon: ${iconPath}`)
-              // Fallback vers l'icône par défaut en cas d'erreur
-              e.currentTarget.style.display = 'none'
-            }} />
-          }
+        ? () => <PluginIconComponent plugin={plugin} />
         : User
       addMenuItem({
         id: plugin.id,
@@ -128,6 +134,9 @@ const ProjectsPage = () => (
   <div className="p-6">
     <h1 className="text-2xl font-bold mb-4">Projets</h1>
     <p>Vos projets sont affichés ici.</p>
+    <Link to="/BuildRenderer">
+            <button className="px-3 py-1 bg-gray-200 rounded">Build Renderer</button>
+    </Link>
   </div>
 )
 

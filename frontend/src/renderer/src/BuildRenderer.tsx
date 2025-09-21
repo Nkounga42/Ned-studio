@@ -1,3 +1,4 @@
+import { Link } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 
 export default function BuildRenderer() {
@@ -233,6 +234,9 @@ export default function BuildRenderer() {
           </div>
         </div>
       </div>
+      <Link to="/">
+            <button className="px-3 py-1 bg-gray-200 rounded">Retour</button>
+      </Link>
     </div>
   );
 }

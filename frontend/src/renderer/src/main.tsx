@@ -13,6 +13,7 @@ import "./assets/main.css"
 // import Settings from "./pages/Settings"
 // import TabManager from "./components/TabManager"
 import { MenuProvider } from "./contexts/MenuContext"
+import BuildRenderer from "./BuildRenderer"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <Route path="*" element={<App />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/BuildRenderer" element={<BuildRenderer />} />
               </Routes>
               <Toaster />
             </>
